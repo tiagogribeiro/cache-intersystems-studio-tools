@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git.AutomatizeUtil">
+<Final>1</Final>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64265,38792.223979</TimeCreated>
+
+<Method name="getExtension">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    #dim extension AS %Sring = $piece(file,".",size,size)
+    quit $zconvert(extension,"L")
+]]></Implementation>
+</Method>
+
+<Method name="getNameFileNotExtension">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    quit $piece(file,".",1,(size-1))
+]]></Implementation>
+</Method>
+
+<Method name="getNameFileNotExtensionAndPackages">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    quit $piece(file,".",(size-1),(size-1))
+]]></Implementation>
+</Method>
+
+<Method name="isClassCompiled">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(%CompiledClass).%ExistsId(className)
+]]></Implementation>
+</Method>
+
+<Method name="limitDescription">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>description:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    if ($length(description) > 20){
+        quit $extract(description,1,20)_"..."
+    }
+    quit description
+]]></Implementation>
+</Method>
+</Class>
+</Export>

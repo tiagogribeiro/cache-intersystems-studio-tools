@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git.ActionMenu">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64281,37672.152777</TimeCreated>
+
+<Method name="getLastNameMenu">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit $piece(name,",",$length(name,","))
+]]></Implementation>
+</Method>
+
+<Method name="active">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,InternalName:%String,&Enable:%Boolean,&DisplayName:%String,SelectedText:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ((..getLastNameMenu(name) = "%TestAndCompile")||(..getLastNameMenu(name) = "%TestClass")){
+        set test = ##class(AutomatizeTest).%New(InternalName)
+        set Enable = test.isRunTest()
+        set DisplayName = DisplayName_$select(test.getClassTest()'="":" '"_test.getClassTest()_"'",1:"")               
+        set DisplayName = DisplayName_$select(SelectedText'="":"»'"_##class(AutomatizeUtil).limitDescription(SelectedText)_"'",1:"")
+        
+    } elseif( ..getLastNameMenu(name) = "%TestPackage" ){
+        #dim extension As %String = ##class(AutomatizeUtil).getExtension(InternalName)
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(InternalName)
+        if (extension = "pkg"){
+            set Enable = $$$YES
+            set DisplayName = DisplayName_$select(package'="":" '"_package_"'",1:"")
+        } else {
+            set Enable = $$$NO
+        }
+    } elseif (..getLastNameMenu(name) = "%TestLastTest"){
+        #dim lastTest As %String = ##class(AutomatizeTest).%New(InternalName).getLastTest()
+        if ( lastTest'="" ){
+            set Enable = $$$YES
+            set DisplayName = DisplayName_$select(lastTest'="":" '"_lastTest_"'",1:"")
+        } else {
+            set Enable = $$$NO
+        }
+    } elseif (..getLastNameMenu(name) = "%TestIntegrateSlack"){
+        set Enable = $$$YES
+    }
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="execute">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String,InternalName:%String,SelectedText</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    if (..getLastNameMenu(name) = "%TestAndCompile"){
+       if ( $system.OBJ.Compile(##class(AutomatizeUtil).getNameFileNotExtension( InternalName )) ){            
+            do:(SelectedText'="") ##class(AutomatizeTest).%New(InternalName).run(SelectedText)
+            do:(SelectedText="") ##class(AutomatizeTest).%New(InternalName).run()
+       }
+        quit $$$YES
+    } elseif (..getLastNameMenu(name) = "%TestClass"){
+        do:(SelectedText'="") ##class(AutomatizeTest).%New(InternalName).run(SelectedText)
+        do:(SelectedText="") ##class(AutomatizeTest).%New(InternalName).run()
+    } elseif (..getLastNameMenu(name) = "%TestAllClass"){
+        do ##class(AutomatizeTest).%New(InternalName).runAllSuite()
+    } elseif( ..getLastNameMenu(name) = "%TestPackage" ){
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(InternalName)
+        do ##class(AutomatizeTest).%New(InternalName).runPackage( package )
+    } elseif (..getLastNameMenu(name) = "%TestLastTest"){
+        do ##class(AutomatizeTest).%New(InternalName).runLastTest()
+    } elseif (..getLastNameMenu(name) = "%TestClearResult"){
+        do ##class(AutomatizeTest).%New("").clearResult()     
+    } elseif (..getLastNameMenu(name) = "%TestClearPopulate"){
+        do ##class(AutomatizeTest).%New("").clearPopulate()     
+    } elseif (..getLastNameMenu(name) = "%TestIntegrateSlack"){
+    }
+    
+    quit $$$NO
+]]></Implementation>
+</Method>
+</Class>
+</Export>

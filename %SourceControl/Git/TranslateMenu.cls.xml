@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git.TranslateMenu">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64281,37991.035363</TimeCreated>
+
+<Method name="translate">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,&DisplayName]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim lastName As %String
+    set lastName = $piece(name,",",$length(name,","))    
+    
+    set DisplayName = $case(lastName,   
+                "%TestUnitarioContext" : "Testar",          ; Não mudar, menu contexto.
+                "%TestUnitario" : "Testar",                 ; Não mudar, menu principal.
+                "%TestClass" : "Testar classe",                
+                "%TestAndCompile" : "Compilar e Testar classe",
+                "%TestAllClass" : "Testar Suíte Completo",
+                "%TestPackage" : "Testar Pacote",
+                "%TestLastTest" : "Testar o último testado",
+                "%TestClearResult" : "Limpar cache de resultados",
+                "%TestClearPopulate" : "Limpar Populate",
+                "%TestIntegrateSlack" : "Integrar resultados com o Slack",
+                :DisplayName)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

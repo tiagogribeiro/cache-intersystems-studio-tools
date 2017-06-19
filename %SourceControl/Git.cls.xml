@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git">
+<Import>%SourceControl.Git</Import>
+<Super>%Studio.Extension.Base</Super>
+<TimeCreated>62655,58027.787011</TimeCreated>
+
+<XData name="Menu">
+<Data><![CDATA[
+<MenuBase>
+<Menu Name="%SourceMenu" Type="0">
+<MenuItem Name="%Cache-Git-Settings" />
+<MenuItem Name="%Settings" />
+<MenuItem Name="%CreateRepo" Save = "001"/>
+<MenuItem Name="%Clone" Save = "001"/>
+<MenuItem Name="%Commit" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Pull" Save = "001"/>
+<MenuItem Name="%Fetch" Save = "001"/>
+<MenuItem Name="%Switch" Save = "001"/>
+<MenuItem Name="%Merge" Save = "001"/>
+<MenuItem Name="%Push" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Diff" Save = "001"/>
+<MenuItem Name="%RepoStatus" Save = "001"/>
+<MenuItem Name="%Resolve" Save = "001"/>
+<MenuItem Name="%Revert" Save = "001"/>
+<MenuItem Name="%Log" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%StashSave" Save = "001"/>
+<MenuItem Name="%StashPop" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Export" Save = "001" />
+<MenuItem Name="%ExportForce" Save = "001" />
+<MenuItem Name="%Import" Save = "001" />
+<MenuItem Name="%ImportForce" Save = "001" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%OpenRepoFolder" Save = "001" />
+</Menu>
+<Menu Name="%TestUnitario" Type="0">
+<MenuItem Name="%TestAllClass" />
+<MenuItem Name="%TestClass" />
+<MenuItem Name="%TestAndCompile" />
+<MenuItem Name="%TestLastTest" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestClearResult" />
+<MenuItem Name="%TestClearPopulate" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestIntegrateSlack" />
+</Menu>
+<Menu Name="%SourceMenuContext" Type="1">
+<MenuItem Name="%AddToSC"/>
+<MenuItem Name="%RemoveFromSC"/>
+<MenuItem Name="%Diff" Save = "001"/>
+<MenuItem Name="%Blame" Save = "001"/>
+</Menu>
+<Menu Name="%TestUnitarioContext" Type="1">
+<MenuItem Name="%TestClass" />
+<MenuItem Name="%TestAndCompile" />
+<MenuItem Name="%TestPackage" />
+</Menu>
+</MenuBase>
+]]></Data>
+</XData>
+
+<Method name="UserAction">
+<FormalSpec><![CDATA[Type:%Integer,Name:%String,InternalName:%String,SelectedText:%String,&Action:%String,&Target:%String,&Msg:%String,&Reload:%Boolean]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    ; Tiago G. Ribeiro
+    if ('##class(ActionMenu).execute(Name, InternalName, SelectedText)){
+        #dim ec As %Status = $$$OK
+        #dim menu As %Status = $Piece(Name, ",", 1)
+        if menu '= "%SourceMenu", menu'="%SourceMenuContext" {
+            quit $$$OK
+        }
+        set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+        set ec = ##class(Utils).UserAction(InternalName, Name, .Target, .Action, .Reload)
+        quit ec
+    } else {
+        quit $$$OK
+    }
+]]></Implementation>
+</Method>
+
+<Method name="OnSourceMenuItem">
+<FormalSpec><![CDATA[name:%String,&Enabled:%String,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    if name = "%Cache-Git-Settings" {
+        // We always show Settings
+        set DisplayName = "Settings"
+        quit $$$OK
+    } 
+    if name = "%Settings" && ##class(Utils).GitBinExists() {
+        set DisplayName = "TortoiseGit Settings"
+        quit $$$OK
+    }
+    
+    if ##class(Utils).NeedSettings() {
+        set Enabled = -1
+        quit $$$OK
+    }
+    if ##class(Utils).IsNamespaceInGit() {
+        if name = "%Export" {
+            set DisplayName = "Export All"
+        } elseif name="%ExportForce" {
+            set DisplayName = "Export All Force"
+        } elseif name = "%Import" {
+            set DisplayName = "Import All"
+        } elseif name = "%ImportForce" {
+            set DisplayName = "Import All Force"
+        }elseif name = "%RepoStatus" && ##class(Utils).GitBinExists() {
+            set DisplayName = "Check for modifications"
+        }elseif name = "%OpenRepoFolder" {
+            set DisplayName = "Open Repo Folder"
+        }
+        elseif ##class(Utils).IsMenuGitCommand(name) && ##class(Utils).GitBinExists() {
+            set DisplayName = $case(name,"%StashSave":"Stash save",
+                                         "%StashPop":"Stash pop",
+                                         :$Extract(name, 2, *))
+        } 
+        else {
+            set Enabled = -1
+        }
+    } elseif ##class(Utils).GitBinExists() { 
+        if name = "%CreateRepo" {
+            set DisplayName = "Create Repo"
+        } elseif name = "%Clone" {
+            set DisplayName = "Clone"
+        } else {
+            set Enabled = -1
+        }
+    } else {
+        set Enabled = -1 
+    }
+        
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnSourceMenuContextItem">
+<FormalSpec><![CDATA[itemName:%String,menuItemName:%String,&Enabled:%String,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set:menuItemName="%AddToSC" DisplayName = "Add to SourceControl"
+    set:menuItemName="%RemoveFromSC" DisplayName = "Remove from SourceControl"
+    
+    if (itemName = "") || '##class(Utils).IsNamespaceInGit() {
+        set Enabled = -1
+    }elseif ##class(Utils).IsInSourceControl(##class(Utils).NormalizeInternalName(itemName)) {
+        set Enabled = $Case(menuItemName, "%AddToSC":-1,:1)
+    } else {
+        set Enabled = $Case(menuItemName, "%AddToSC":1,:-1)
+    }
+        
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnMenuItem">
+<Description><![CDATA[
+This is called for every menu item returned to Studio to allow the menu to be enabled/disabled without
+having to write a custom query for <query>MenuItems</query>. The <var>DisplayName</var> of this menu is
+also passed by reference and this may be modified to change the appearance of this menu item. The <var>MenuName</var>
+is the main menu name then the submenu name separated by a ','. If <var>Enabled</var> is set to -1 then it will remove
+this menu item from the list totally, 0 will gray the menu item out and the default 1 will display the menu item as normal.]]></Description>
+<FormalSpec><![CDATA[MenuName:%String,InternalName:%String,SelectedText:%String,&Enabled:%Boolean,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim menu As %String= $Piece(MenuName,",")
+    #dim name As %String = $Piece(MenuName,",",2)
+    if menu = "%SourceMenuContext", name = "" {
+        set DisplayName = "Git"
+    }
+    if menu = "%SourceMenu", name = "" {
+        set DisplayName = "Git"
+    }
+    #dim ec As %Status = $$$OK
+
+    if menu = "%SourceMenu" {
+        set ec = ..OnSourceMenuItem(name, .Enabled, .DisplayName)
+    }elseif menu = "%SourceMenuContext" {
+        set ec = ..OnSourceMenuContextItem(InternalName, name, .Enabled, .DisplayName)
+    }
+    
+    ; Tiago G. Ribeiro
+    do ##class(TranslateMenu).translate( MenuName, .DisplayName )
+    do ##class(ActionMenu).active( MenuName, InternalName, .Enabled, .DisplayName, SelectedText )
+        
+    Quit ec
+]]></Implementation>
+</Method>
+
+<Method name="OnBeforeLoad">
+<Description>
+This is called before the actual load of data to give the chance
+to load the item from an external format.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsInSourceControl(InternalName) {
+        quit ##class(Utils).ImportItem(InternalName)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterSave">
+<Description>
+This is called after the item has been saved to the database.
+It may be passed a reference to the object representing the item
+just saved. It can be use to export this documement to an external form for example.</Description>
+<FormalSpec>InternalName:%String,Object:%RegisteredObject=$$$NULLOREF</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsNamespaceInGit() && ..IsInSourceControl(InternalName) {
+        $$$QuitOnError(##class(Utils).RemoveRoutineTSH(InternalName))
+        quit ##class(Utils).ExportItem(InternalName)
+    } else {
+        quit $$$OK
+    }
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterCompile">
+<Description>
+Called after the compile of the item is done.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = ..OnAfterSave(InternalName)
+    do ##class(AutomatizeTest).%New(InternalName).showMessageEncourageTest()    
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="IsInSourceControl">
+<Description>
+Returns true if this item is in source control and false otherwise.</Description>
+<CodeMode>expression</CodeMode>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[InternalName'="" && ##class(Utils).IsInSourceControl(##class(Utils).NormalizeInternalName(InternalName))
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterDelete">
+<Description>
+Called after an item is deleted.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsInSourceControl(InternalName) {
+        quit ##class(Utils).DeleteExternalFile(InternalName)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnBeforeTimestamp">
+<Description>
+Called before Studio checks for the timestamp of an item.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<Implementation><![CDATA[
+    do ##class(Utils).ImportItem(InternalName)
+    Quit
+]]></Implementation>
+</Method>
+</Class>
+</Export>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git.AutomatizeTest">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64261,63233.601792</TimeCreated>
+
+<Parameter name="STORAGE">
+<Default>^mtempAutomatizeTest</Default>
+</Parameter>
+
+<Parameter name="FILEuTESTABLE">
+<Expression>$listBuild("cls")</Expression>
+</Parameter>
+
+<Parameter name="PACKAGEuTEST">
+<Default>test</Default>
+</Parameter>
+
+<Property name="classNameTest">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="classNameComplete">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="className">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="package">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="packageTest">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="packageReplace">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Parameter name="DIRECTIONuFINDuRIGHT">
+<Default>right</Default>
+</Parameter>
+
+<Parameter name="DIRECTIONuFINDuLEFT">
+<Default>left</Default>
+</Parameter>
+
+<Method name="%OnNew">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isTestable(className)){        
+        set ..classNameComplete = className
+        do ..registerPackage(className)
+        do ..registerClassName(className)
+        do ..registerPackageTest()
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isTestable">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ( $listFind(..#FILEuTESTABLE, ##class(AutomatizeUtil).getExtension(className) ) > 0)
+]]></Implementation>
+</Method>
+
+<Method name="isManagerExist">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled("test.Manager")
+]]></Implementation>
+</Method>
+
+<Method name="isPrefixTestExist">
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ($extract(className,1,4)="Test")
+]]></Implementation>
+</Method>
+
+<Method name="registerClassName">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %Integer = $length(className,".")    
+    #dim class = ##class(AutomatizeUtil).getNameFileNotExtensionAndPackages(className)
+    
+    if (..isPrefixTestExist(class)){
+        set ..className = class
+    } else {
+        set ..className = $$$FormatText("%1%2","Test",class)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="registerPackage">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %Integer = $length(className,".") 
+    set ..package = $piece(className,".",1,(size-2)) // 2 - Extension and class name.
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="registerPackageTest">
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..mountPackageTest()
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="mountPackageTest">
+<Description>
+Test package registration</Description>
+<FormalSpec>direction:%String=..#DIRECTIONuFINDuRIGHT</FormalSpec>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim position As %Integer
+    #dim packageFinded = ""
+    #dim map As %String = ""
+    
+    do ##class(RegisterPackageTest).registerPackageTest( .map )    
+    set:(direction=..#DIRECTIONuFINDuRIGHT) packageFinded = ..findPackageLeftToRight(.map)
+    set:(direction=..#DIRECTIONuFINDuLEFT) packageFinded = ..findPackageRightToLeft(.map)
+    
+    if (packageFinded'=""){        
+        set ..packageTest = $replace(..package,..packageReplace,packageFinded)
+    } else {
+        set ..packageTest = $replace(..package,"test.","")
+    }
+    
+    do ..isExistClassTestMoutaded(direction)
+]]></Implementation>
+</Method>
+
+<Method name="findPackageLeftToRight">
+<FormalSpec><![CDATA[&map]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim packageFinded,findPack = ""
+    #dim position As %Integer
+    #dim size As %Integer = $length(..package,".")
+    for position=1:1 {                
+        quit:(position>size)        
+        set findPack = $piece(..package,".",1,position)        
+        quit:(findPack="")
+        
+        set packageFinded = $get(map(findPack))
+        quit:(packageFinded'="")
+    }
+        
+    set ..packageReplace = findPack
+    quit packageFinded
+]]></Implementation>
+</Method>
+
+<Method name="findPackageRightToLeft">
+<FormalSpec><![CDATA[&map]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim packageFinded,findPack = ""
+    #dim position As %Integer
+    #dim size As %Integer = $length(..package,".")
+    for position=0:1 {                
+        quit:(position>size)
+        
+        set findPack = $piece(..package,".",1,(size-position))
+        quit:(findPack="")
+        
+        set packageFinded = $get(map(findPack))
+        quit:(packageFinded'="")
+    }
+        
+    set ..packageReplace = findPack
+    quit packageFinded
+]]></Implementation>
+</Method>
+
+<Method name="isExistClassTestMoutaded">
+<FormalSpec>direction:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    do ..registerNameClassTest()
+    if ('..isClassCompiled(..classNameTest) && (direction=..#DIRECTIONuFINDuRIGHT)){
+        do ..mountPackageTest(..#DIRECTIONuFINDuLEFT)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="registerNameClassTest">
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..packageTest '= ""){
+        set ..classNameTest = $$$FormatText("%1.%2.%3",..#PACKAGEuTEST,..packageTest,..className)
+    } else {
+        set ..classNameTest = $$$FormatText("%1.%2",..#PACKAGEuTEST,..className)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isClassCompiled">
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled(className)
+]]></Implementation>
+</Method>
+
+<Method name="run">
+<FormalSpec>method:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+         if (..isClassCompiled(..classNameTest)){ 
+            do ..registerLastTest()            
+            do:(method'="") $classMethod("test.Manager","run",..classNameTest,method)
+            do:(method="") $classMethod("test.Manager","run",..classNameTest)
+         } else {
+             if (..isTestable(..classNameComplete)){
+                write !,"[TesteUnitário] - Esta classe não possui uma classe de teste."
+             }
+         }
+    } else {
+        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runAllSuite">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+            do $classMethod("test.Manager","run")
+    } else {
+        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runPackage">
+<FormalSpec>package:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+            do $classMethod("test.Manager","run", package)
+    } else {
+        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim lastTest As %String = ..getLastTest()
+    if (lastTest '= ""){
+        do $classMethod("test.Manager","run",lastTest)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isRunTest">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist() && ..isTestable(..classNameComplete) && ..isClassCompiled(..classNameTest)){
+         quit $$$YES
+    }
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Method name="getClassTest">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit ..classNameTest
+]]></Implementation>
+</Method>
+
+<Method name="registerLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set @..#STORAGE@("lastTest",$namespace,$username)=..classNameTest
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $get(@..#STORAGE@("lastTest",$namespace,$username))
+]]></Implementation>
+</Method>
+
+<Method name="showMessageEncourageTest">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    if ('..isRunTest()){
+        write !,"[TestUnitário] - Automatize seus testes, crie uma classe de teste."
+    } else {
+        write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(test.Manager).run("""_..classNameTest_""")"
+    }
+]]></Implementation>
+</Method>
+
+<Method name="clearResult">
+<Implementation><![CDATA[
+     if (..isManagerExist()){
+        do ##class(test.Manager).clearResult()
+     }
+]]></Implementation>
+</Method>
+
+<Method name="clearPopulate">
+<Implementation><![CDATA[
+     if (..isManagerExist()){
+        do ##class(test.Manager).clearPopulate()
+     }
+]]></Implementation>
+</Method>
+</Class>
+</Export>
