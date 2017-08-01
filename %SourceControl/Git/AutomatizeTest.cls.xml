@@ -79,7 +79,7 @@
 
 <Method name="isManagerExist">
 <ReturnType>%Boolean</ReturnType>
-<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled("test.Manager")
+<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled("test.Agent")
 ]]></Implementation>
 </Method>
 
@@ -232,15 +232,15 @@ Test package registration</Description>
     if (..isManagerExist()){
          if (..isClassCompiled(..classNameTest)){ 
             do ..registerLastTest()            
-            do:(method'="") $classMethod("test.Manager","run",..classNameTest,method)
-            do:(method="") $classMethod("test.Manager","run",..classNameTest)
+            do:(method'="") $classMethod("test.Agent","run",..classNameTest,method)
+            do:(method="") $classMethod("test.Agent","run",..classNameTest)
          } else {
              if (..isTestable(..classNameComplete)){
                 write !,"[TesteUnitário] - Esta classe não possui uma classe de teste."
              }
          }
     } else {
-        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+        write !,"[TesteUnitário] - Não existe a classe 'test.Agent' para rodar os testes."
     }
     quit $$$OK
 ]]></Implementation>
@@ -250,9 +250,9 @@ Test package registration</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     if (..isManagerExist()){
-            do $classMethod("test.Manager","run")
+            do $classMethod("test.Agent","run")
     } else {
-        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+        write !,"[TesteUnitário] - Não existe a classe 'test.Agent' para rodar os testes."
     }
     quit $$$OK
 ]]></Implementation>
@@ -263,9 +263,9 @@ Test package registration</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     if (..isManagerExist()){
-            do $classMethod("test.Manager","run", package)
+            do $classMethod("test.Agent","run", package)
     } else {
-        write !,"[TesteUnitário] - Não existe a classe 'test.Manager' para rodar os testes."
+        write !,"[TesteUnitário] - Não existe a classe 'test.Agent' para rodar os testes."
     }
     quit $$$OK
 ]]></Implementation>
@@ -276,7 +276,7 @@ Test package registration</Description>
 <Implementation><![CDATA[
     #dim lastTest As %String = ..getLastTest()
     if (lastTest '= ""){
-        do $classMethod("test.Manager","run",lastTest)
+        do $classMethod("test.Agent","run",lastTest)
     }
     quit $$$OK
 ]]></Implementation>
@@ -318,7 +318,7 @@ Test package registration</Description>
     if ('..isRunTest()){
         write !,"[TestUnitário] - Automatize seus testes, crie uma classe de teste."
     } else {
-        write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(test.Manager).run("""_..classNameTest_""")"
+        write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(test.Agent).run("""_..classNameTest_""")"
     }
 ]]></Implementation>
 </Method>
@@ -326,7 +326,7 @@ Test package registration</Description>
 <Method name="clearResult">
 <Implementation><![CDATA[
      if (..isManagerExist()){
-        do ##class(test.Manager).clearResult()
+        do ##class(test.Agent).clearResult()
      }
 ]]></Implementation>
 </Method>
@@ -334,7 +334,7 @@ Test package registration</Description>
 <Method name="clearPopulate">
 <Implementation><![CDATA[
      if (..isManagerExist()){
-        do ##class(test.Manager).clearPopulate()
+        do ##class(test.Agent).clearPopulate()
      }
 ]]></Implementation>
 </Method>
