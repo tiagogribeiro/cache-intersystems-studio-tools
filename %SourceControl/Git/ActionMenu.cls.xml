@@ -18,8 +18,9 @@
 <FormalSpec><![CDATA[name:%String,InternalName:%String,&Enable:%Boolean,&DisplayName:%String,SelectedText:%String]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+    set test = ##class(AutomatizeTest).%New(InternalName)
     if ((..getLastNameMenu(name) = "%TestAndCompile")||(..getLastNameMenu(name) = "%TestClass")){
-        set test = ##class(AutomatizeTest).%New(InternalName)
+        
         set Enable = test.isRunTest()
         set DisplayName = DisplayName_$select(test.getClassTest()'="":" '"_test.getClassTest()_"'",1:"")               
         set DisplayName = DisplayName_$select(SelectedText'="":"»'"_##class(AutomatizeUtil).limitDescription(SelectedText)_"'",1:"")
@@ -34,7 +35,7 @@
             set Enable = $$$NO
         }
     } elseif (..getLastNameMenu(name) = "%TestLastTest"){
-        #dim lastTest As %String = ##class(AutomatizeTest).%New(InternalName).getLastTest()
+        #dim lastTest As %String = test.getLastTest()
         if ( lastTest'="" ){
             set Enable = $$$YES
             set DisplayName = DisplayName_$select(lastTest'="":" '"_lastTest_"'",1:"")
