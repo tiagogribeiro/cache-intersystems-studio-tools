@@ -236,9 +236,7 @@ Called after the compile of the item is done.</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set status = ..OnAfterSave(InternalName)
-    set automatize = ##class(AutomatizeTest).%New(InternalName)
-    do automatize.autoTest()
-    do automatize.showMessageEncourageTest()      
+    do ##class(AutomatizeTest).%New(InternalName).autoTest()
     quit status
 ]]></Implementation>
 </Method>

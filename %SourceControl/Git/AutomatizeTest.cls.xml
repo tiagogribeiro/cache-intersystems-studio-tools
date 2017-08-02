@@ -313,6 +313,7 @@ Test package registration</Description>
 </Method>
 
 <Method name="showMessageEncourageTest">
+<Private>1</Private>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     if ('..isRunTest()){
@@ -345,6 +346,7 @@ Test package registration</Description>
     if (+##class(OptionState).getOption("%TestAutomatic")=$$$YES){
         do ..run()
     }
+    do ..showMessageEncourageTest()
     quit $$$OK
 ]]></Implementation>
 </Method>
