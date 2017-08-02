@@ -319,7 +319,9 @@ Test package registration</Description>
     if ('..isRunTest()){
         write !,"[TestUnitário] - Automatize seus testes, crie uma classe de teste."
     } else {
-        write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(test.Agent).run("""_..classNameTest_""")"
+         if (+##class(OptionState).getOption("%TestAutomatic")=$$$NO){
+            write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(test.Agent).run("""_..classNameTest_""")"
+         }
     }
 ]]></Implementation>
 </Method>
