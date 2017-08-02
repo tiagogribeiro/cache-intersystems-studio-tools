@@ -44,6 +44,18 @@
         }
     } elseif (..getLastNameMenu(name) = "%TestIntegrateSlack"){
         set Enable = $$$YES
+    } elseif (..getLastNameMenu(name) = "%TestAutomaticOn"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$YES){
+            set Enable = $$$NO
+        } else {
+            set Enable = $$$YES
+        }
+    } elseif (..getLastNameMenu(name) = "%TestAutomaticOff"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$NO){
+            set Enable = $$$NO
+        } else {
+            set Enable = $$$YES
+        }
     }
     
     quit $$$OK
@@ -75,7 +87,10 @@
         do ##class(AutomatizeTest).%New("").clearResult()     
     } elseif (..getLastNameMenu(name) = "%TestClearPopulate"){
         do ##class(AutomatizeTest).%New("").clearPopulate()     
-    } elseif (..getLastNameMenu(name) = "%TestIntegrateSlack"){
+    } elseif (..getLastNameMenu(name) = "%TestAutomaticOn"){        
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$YES)
+    } elseif (..getLastNameMenu(name) = "%TestAutomaticOff"){
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$NO)        
     }
     
     quit $$$NO

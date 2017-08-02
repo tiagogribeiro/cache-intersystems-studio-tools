@@ -23,6 +23,8 @@
                 "%TestClearResult" : "Limpar cache de resultados",
                 "%TestClearPopulate" : "Limpar Populate",
                 "%TestIntegrateSlack" : "Integrar resultados com o Slack",
+                "%TestAutomaticOff" : "Desligar auto Teste",
+                "%TestAutomaticOn" : "Ligar auto Teste",
                 :DisplayName)
     
     quit $$$OK

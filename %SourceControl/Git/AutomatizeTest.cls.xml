@@ -338,5 +338,15 @@ Test package registration</Description>
      }
 ]]></Implementation>
 </Method>
+
+<Method name="autoTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+##class(OptionState).getOption("%TestAutomatic")=$$$YES){
+        do ..run()
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
 </Class>
 </Export>

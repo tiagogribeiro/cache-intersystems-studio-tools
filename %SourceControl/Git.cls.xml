@@ -47,6 +47,9 @@
 <MenuItem Name="%TestClearPopulate" />
 <MenuItem Separator="true"/>
 <MenuItem Name="%TestIntegrateSlack" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestAutomaticOn" />
+<MenuItem Name="%TestAutomaticOff" />
 </Menu>
 <Menu Name="%SourceMenuContext" Type="1">
 <MenuItem Name="%AddToSC"/>
@@ -233,7 +236,9 @@ Called after the compile of the item is done.</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set status = ..OnAfterSave(InternalName)
-    do ##class(AutomatizeTest).%New(InternalName).showMessageEncourageTest()    
+    set automatize = ##class(AutomatizeTest).%New(InternalName)
+    do automatize.autoTest()
+    do automatize.showMessageEncourageTest()      
     quit status
 ]]></Implementation>
 </Method>
