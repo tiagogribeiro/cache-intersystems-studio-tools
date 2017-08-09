@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Git.ActionMenuStatus">
+<Super>Menu</Super>
+<TimeCreated>64504,53610.240166</TimeCreated>
+
+<Property name="automatizeTest">
+<Type>AutomatizeTest</Type>
+<Private>1</Private>
+</Property>
+
+<Method name="%OnNew">
+<FormalSpec>name:%String,internalName:%String,selectedText:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##super(name, internalName, selectedText)
+    set ..automatizeTest = ##class(AutomatizeTest).%New(internalName)
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="active">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,InternalName:%String,&Enable:%Boolean,&DisplayName:%String,SelectedText:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set action = ..%New(name, InternalName)
+    do action.testAnCompile( .DisplayName, .SelectedText, .Enable )
+    do action.testInPackage( .DisplayName, .Enable )
+    do action.testLastTest( .DisplayName, .Enable )
+    do action.activeAutomaticTest( .Enable )
+    do action.inactiveAutomaticTest( .Enable )
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="testAnCompile">
+<FormalSpec><![CDATA[&displayName:%String,&selectedText:%String,&enable:%Boolean]]></FormalSpec>
+<Implementation><![CDATA[
+    
+    if ((##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAndCompile")||(##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClass")){
+        
+        set enable = ..automatizeTest.isRunTest()
+        set displayName = displayName_$select(..automatizeTest.getClassTest()'="":" '"_..automatizeTest.getClassTest()_"'",1:"")               
+        set displayName = displayName_$select(selectedText'="":"»'"_##class(AutomatizeUtil).limitDescription(selectedText)_"'",1:"")
+        
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testInPackage">
+<FormalSpec><![CDATA[&displayName:%String,&enable:%Boolean]]></FormalSpec>
+<Implementation><![CDATA[
+    if ( ##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestPackage" ){
+        #dim extension As %String = ##class(AutomatizeUtil).getExtension(..internalName)
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(..internalName)
+        if (extension = "pkg"){
+            set enable = $$$YES
+            set displayName = displayName_$select(package'="":" '"_package_"'",1:"")
+        } else {
+            set enable = $$$NO
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testLastTest">
+<FormalSpec><![CDATA[&displayName:%String,&enable:%Boolean]]></FormalSpec>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestLastTest"){
+        #dim lastTest As %String = ..automatizeTest.getLastTest()
+        if ( lastTest'="" ){
+            set enable = $$$YES
+            set displayName = displayName_$select(lastTest'="":" '"_lastTest_"'",1:"")
+        } else {
+            set enable = $$$NO
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="activeAutomaticTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOn"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$YES){
+            set enable = $$$NO
+        } else {
+            set enable = $$$YES
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveAutomaticTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOff"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$NO){
+            set enable = $$$NO
+        } else {
+            set enable = $$$YES
+        }
+    }
+]]></Implementation>
+</Method>
+</Class>
+</Export>

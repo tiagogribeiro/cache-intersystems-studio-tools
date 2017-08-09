@@ -4,17 +4,23 @@
 <Super>%RegisteredObject</Super>
 <TimeCreated>64281,37991.035363</TimeCreated>
 
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
 <Method name="translate">
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[name:%String,&DisplayName]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     #dim lastName As %String
-    set lastName = $piece(name,",",$length(name,","))    
+    set lastName = ##class(ActionMenuUtil).getLastNameMenu( name )
     
     set DisplayName = $case(lastName,   
-                "%TestUnitarioContext" : "Testar",          ; Não mudar, menu contexto.
-                "%TestUnitario" : "Testar",                 ; Não mudar, menu principal.
+                "%TestUnitarioContext" : "Testar",          ; Do not move, context menu.
+                "%TestUnitario" : "Testar",                 ; Do not move, main menu.
                 "%TestClass" : "Testar classe",                
                 "%TestAndCompile" : "Compilar e Testar classe",
                 "%TestAllClass" : "Testar Suíte Completo",
@@ -22,7 +28,6 @@
                 "%TestLastTest" : "Testar o último testado",
                 "%TestClearResult" : "Limpar cache de resultados",
                 "%TestClearPopulate" : "Limpar Populate",
-                "%TestIntegrateSlack" : "Integrar resultados com o Slack",
                 "%TestAutomaticOff" : "Desligar auto Teste",
                 "%TestAutomaticOn" : "Ligar auto Teste",
                 :DisplayName)

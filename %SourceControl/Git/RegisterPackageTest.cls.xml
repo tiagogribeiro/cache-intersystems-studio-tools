@@ -5,6 +5,8 @@
 <TimeCreated>64285,36307.762499</TimeCreated>
 
 <Method name="registerPackageTest">
+<Description>
+Mapping packages of test legacy of ERP</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[&map:%String]]></FormalSpec>
 <ReturnType>%String</ReturnType>

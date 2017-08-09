@@ -54,6 +54,21 @@
 <Default>left</Default>
 </Parameter>
 
+<Method name="createFrom">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>internalName:%String</FormalSpec>
+<ReturnType>%SourceControl.Git.AutomatizeTest</ReturnType>
+<Implementation><![CDATA[    quit ..%New( internalName )
+]]></Implementation>
+</Method>
+
+<Method name="create">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%SourceControl.Git.AutomatizeTest</ReturnType>
+<Implementation><![CDATA[    quit ..%New("")
+]]></Implementation>
+</Method>
+
 <Method name="%OnNew">
 <FormalSpec>className:%String</FormalSpec>
 <Private>1</Private>

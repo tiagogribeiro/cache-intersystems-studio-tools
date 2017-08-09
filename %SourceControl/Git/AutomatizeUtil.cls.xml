@@ -5,9 +5,15 @@
 <Super>%RegisteredObject</Super>
 <TimeCreated>64265,38792.223979</TimeCreated>
 
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
 <Method name="getExtension">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>file</FormalSpec>
+<FormalSpec>file:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     #dim size As %String = $length(file,".")
@@ -18,7 +24,7 @@
 
 <Method name="getNameFileNotExtension">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>file</FormalSpec>
+<FormalSpec>file:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     #dim size As %String = $length(file,".")
@@ -28,7 +34,7 @@
 
 <Method name="getNameFileNotExtensionAndPackages">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>file</FormalSpec>
+<FormalSpec>file:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     #dim size As %String = $length(file,".")

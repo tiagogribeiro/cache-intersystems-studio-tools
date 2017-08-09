@@ -1,11 +1,16 @@
 %SourceControl.Git.ActionMenu.cls
+%SourceControl.Git.ActionMenuStatus.cls
+%SourceControl.Git.ActionMenuUtil.cls
 %SourceControl.Git.AutomatizeCompilation.cls
 %SourceControl.Git.AutomatizeTest.cls
 %SourceControl.Git.AutomatizeUtil.cls
 %SourceControl.Git.Integration.cls
+%SourceControl.Git.Menu.cls
+%SourceControl.Git.OptionState.cls
 %SourceControl.Git.RegisterPackageTest.cls
 %SourceControl.Git.TranslateMenu.cls
 %SourceControl.Git.Utils.cls
 %SourceControl.Git.cls
+%SourceControl.git
 /%SourceControl
 <cspapp>/gitprojectsettings.csp

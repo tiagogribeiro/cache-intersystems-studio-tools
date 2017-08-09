@@ -20,6 +20,12 @@
 <Expression>$listBuild("mac","int","cls","csp","csr")</Expression>
 </Parameter>
 
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
 <Method name="isCompiledRule">
 <ClassMethod>1</ClassMethod>
 <Private>1</Private>

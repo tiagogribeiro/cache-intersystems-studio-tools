@@ -40,13 +40,11 @@
 <Menu Name="%TestUnitario" Type="0">
 <MenuItem Name="%TestAllClass" />
 <MenuItem Name="%TestClass" />
-<MenuItem Name="%TestAndCompile" />
 <MenuItem Name="%TestLastTest" />
 <MenuItem Separator="true"/>
 <MenuItem Name="%TestClearResult" />
 <MenuItem Name="%TestClearPopulate" />
 <MenuItem Separator="true"/>
-<MenuItem Name="%TestIntegrateSlack" />
 <MenuItem Separator="true"/>
 <MenuItem Name="%TestAutomaticOn" />
 <MenuItem Name="%TestAutomaticOff" />
@@ -190,7 +188,7 @@ this menu item from the list totally, 0 will gray the menu item out and the defa
     
     ; Tiago G. Ribeiro
     do ##class(TranslateMenu).translate( MenuName, .DisplayName )
-    do ##class(ActionMenu).active( MenuName, InternalName, .Enabled, .DisplayName, SelectedText )
+    do ##class(ActionMenuStatus).active( MenuName, InternalName, .Enabled, .DisplayName, SelectedText )
         
     Quit ec
 ]]></Implementation>
