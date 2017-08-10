@@ -10,6 +10,8 @@ Added menu tools in Studio
 - Testar - Menu in language "Portuguese - Brazil"
 
 # Configuration
-In environment shared is necessary configure the mapping globas of data configuration.
+In environment shared is necessary configure the mapping globas of data configuration(ECP).
 - ^Studio.Option - Data of options menu Studio
 - ^Git.Compile - Data of sources for compile after import
+
+It's not necessary configuration if not is shared environment
