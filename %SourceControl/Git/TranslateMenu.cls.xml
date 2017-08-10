@@ -21,15 +21,15 @@
     set DisplayName = $case(lastName,   
                 "%TestUnitarioContext" : "Testar",          ; Do not move, context menu.
                 "%TestUnitario" : "Testar",                 ; Do not move, main menu.
-                "%TestClass" : "Testar classe",                
-                "%TestAndCompile" : "Compilar e Testar classe",
-                "%TestAllClass" : "Testar Suíte Completo",
-                "%TestPackage" : "Testar Pacote",
-                "%TestLastTest" : "Testar o último testado",
-                "%TestClearResult" : "Limpar cache de resultados",
-                "%TestClearPopulate" : "Limpar Populate",
-                "%TestAutomaticOff" : "Desligar auto Teste",
-                "%TestAutomaticOn" : "Ligar auto Teste",
+                "%TestClass" : "Testar esta classe",                
+                "%TestAndCompile" : "Compilar e testar esta classe",
+                "%TestAllClass" : "Testar o suíte completo",
+                "%TestPackage" : "Testar o pacote",
+                "%TestLastTest" : "Rodar o último teste",
+                "%TestClearResult" : "Limpar os resultados dos testes",
+                "%TestClearPopulate" : "Limpar os dados do Populate",
+                "%TestAutomaticOff" : "Desabilitar - Compilar e testar",
+                "%TestAutomaticOn" : "Habilitar - Compilar e testar",
                 :DisplayName)
     
     quit $$$OK
