@@ -4,26 +4,6 @@
 <Super>Menu</Super>
 <TimeCreated>64281,37672.152777</TimeCreated>
 
-<Method name="execute">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>name:%String,InternalName:%String,SelectedText</FormalSpec>
-<ReturnType>%Boolean</ReturnType>
-<Implementation><![CDATA[
-    set action = ..%New( name, InternalName, SelectedText )
-    do action.testAndCompile()
-    do action.testClass()    
-    do action.testAllSuite()
-    do action.testInPackage()
-    do action.testLastTest()
-    do action.cleanResultsOfTest()
-    do action.cleanPluginPopulate()
-    do action.activeAutomaticTest()
-    do action.inactiveAutomaticTest()
-    
-    quit $$$NO
-]]></Implementation>
-</Method>
-
 <Method name="testAndCompile">
 <Private>1</Private>
 <Implementation><![CDATA[
@@ -108,6 +88,26 @@
     if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOff"){
         do ##class(OptionState).registerOption("%TestAutomatic", $$$NO)        
     }
+]]></Implementation>
+</Method>
+
+<Method name="execute">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String,InternalName:%String,SelectedText</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    set action = ..%New( name, InternalName, SelectedText )
+    do action.testAndCompile()
+    do action.testClass()    
+    do action.testAllSuite()
+    do action.testInPackage()
+    do action.testLastTest()
+    do action.cleanResultsOfTest()
+    do action.cleanPluginPopulate()
+    do action.activeAutomaticTest()
+    do action.inactiveAutomaticTest()
+    
+    quit $$$NO
 ]]></Implementation>
 </Method>
 </Class>

@@ -142,8 +142,6 @@
 </Method>
 
 <Method name="mountPackageTest">
-<Description>
-Test package registration</Description>
 <FormalSpec>direction:%String=..#DIRECTIONuFINDuRIGHT</FormalSpec>
 <Private>1</Private>
 <ReturnType>%String</ReturnType>
