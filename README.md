@@ -31,7 +31,7 @@ Reload your studio, then it will installed language according your language defi
 - 2016.1.3.306.0.
 
 # Installing
-- Enable written in database "CacheSYS" by Portal Caché DataBases
+- Enable written in database "CacheLIB" by Portal Caché DataBases
 - Import project in namespace %SYS
 - In version control enable: %SourceControl.Git
 
