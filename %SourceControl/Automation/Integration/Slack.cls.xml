@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Integration.Slack">
+<Super>%RegisteredObject,SlackConfiguration</Super>
+<TimeCreated>64407,61564.853977</TimeCreated>
+
+<Parameter name="URIuSLACK">
+<Default>hooks.slack.com</Default>
+</Parameter>
+
+<Parameter name="GLOBALuUSERuNAME">
+<Default>^UnitTest.UserName</Default>
+</Parameter>
+
+<Parameter name="ENABLE">
+<Default>^UnitTest.Slack</Default>
+</Parameter>
+
+<Method name="enable">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ($get(@..#ENABLE,0) = $$$YES)
+]]></Implementation>
+</Method>
+
+<Method name="getUserName">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim userName = $get(@..#GLOBALuUSERuNAME)
+    quit $select(userName="":$ZU(110),1:userName)
+]]></Implementation>
+</Method>
+
+<Method name="notify">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    quit:('..enable()) $$$YES
+    if ( '##class(CaptureResult).getStatusAllSuites() ){              
+        do ..error( file )        
+    } else {
+        do ..success( file )
+    }
+    quit $$$YES
+]]></Implementation>
+</Method>
+
+<Method name="error">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+      
+    #dim text = ..getUserName()_" rodou os teste do pacote/classe: "_file    
+    #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
+    #dim id = captureResult.getLastId()
+    
+    #dim body = captureResult.colectorListClassTestedWidthError().getListInLine()         
+    #dim link = captureResult.getLink()
+    #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()
+    #dim title = id_" - Houve falha nos testes"
+    #dim timeAll = captureResult.getTimeAll()
+    
+    do ..send( ..jsonText( title, text, body, "#FF0000", timeAll, totalization, link ) )
+]]></Implementation>
+</Method>
+
+<Method name="success">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+      
+    #dim text = ..getUserName()_" rodou os teste do pacote/classe: "_file    
+    #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
+    #dim timeAll = captureResult.getTimeAll()
+    #dim id = captureResult.getLastId()        
+    #dim title = id_" - Todos os testes passaram"
+    #dim link = captureResult.getLink()
+    #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()     
+    
+    do ..send( ..jsonText( title, text, "",, timeAll, totalization, link ) )
+]]></Implementation>
+</Method>
+
+<Method name="send">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>jsonText:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+     #dim status As %Status
+     set http=##class(%Net.HttpRequest).%New()
+      do http.SetHeader("Content-Type","application/json; charset=utf-8")
+     set http.SSLConfiguration = ..#SSLuCONFIGURATION
+     set http.Https = $$$YES       
+     set http.Timeout = 3
+     set http.Server = ..#URIuSLACK
+      do http.EntityBody.Write( jsonText )
+     set status = http.Post( ..#SERVICE )      
+      kill http
+     quit $SYSTEM.Status.GetErrorCodes( status )
+]]></Implementation>
+</Method>
+
+<Method name="jsonText">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>title:%String,messagem:%String,body:%String,colorHex:%String="#36a64f",timeFlag:%String,totalizationFinal:%String,linkResults:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim timeStamp = 0 ;$ztimestamp
+    #dim textJSON As %String
+    
+    set textJSON = {
+        "attachments" : [{
+            "color" : (colorHex),
+            "pretext" : (messagem),
+            "title" : (title),
+            "title_link" : (linkResults),
+            "text" : (body),
+            "footer": "Testes Automatizados",
+            "footer_icon": (..#ICONuNOTIFY),
+            "fields": [{
+                "title": "Tempo total",
+                "short": "true",
+                "value": (timeFlag)
+            },{
+                "title": "Resultado",
+                "short": "true",
+                "value": (totalizationFinal)
+            }]
+        }]
+    }
+      
+    quit (textJSON).$toJSON()
+]]></Implementation>
+</Method>
+</Class>
+</Export>

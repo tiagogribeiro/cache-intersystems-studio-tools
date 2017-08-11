@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Integration.Jenkins">
+<Description><![CDATA[
+Extend %UnitTest manager to output unit test results in JUnit format.
+This relies on the fact that unit test results are stored in <b>^UnitTest.Result</b> global. Results displayed on CSP pages come from this global.
+https://community.intersystems.com/post/unit-test-intersystems-jenkins]]></Description>
+<Super>%UnitTest.Manager</Super>
+<TimeCreated>64462,42860.994236</TimeCreated>
+
+<Method name="exportJUnitXML">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pFileName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set File=##class(%File).%New(pFileName)
+    set i=$order(^UnitTest.Result(""),-1)
+    if i="" quit $$$OK // no results
+    
+    kill ^||TMP // results global
+    set suite="" for {
+        set suite=$order(^UnitTest.Result(i,suite))
+        quit:suite=""
+        set ^||TMP("S",suite,"time")=$listget(^UnitTest.Result(i,suite),2)
+        
+        set case="" for {
+            set case=$order(^UnitTest.Result(i,suite,case))
+            quit:case=""
+            
+            if $increment(^||TMP("S",suite,"tests"))
+            set ^||TMP("S",suite,"C",case,"time")=$listget(^UnitTest.Result(i,suite),2)
+            set method="" for {
+                set method=$order(^UnitTest.Result(i,suite,case,method))
+                quit:method=""
+                set ^||TMP("S",suite,"C",case,"M",method,"time")=$listget(^UnitTest.Result(i,suite,case,method),2)
+                set assert="" for {
+                    set assert=$order(^UnitTest.Result(i,suite,case,method,assert))
+                    quit:assert=""
+                    if $increment(^||TMP("S",suite,"assertions"))
+                    if $increment(^||TMP("S",suite,"C",case,"assertions"))
+                    if $increment(^||TMP("S",suite,"C",case,"M",method,"assertions"))
+                    if $listget(^UnitTest.Result(i,suite,case,method,assert))=0 {
+                        if $increment(^||TMP("S",suite,"failures"))
+                        if $increment(^||TMP("S",suite,"C",case,"failures"))
+                        if $increment(^||TMP("S",suite,"C",case,"M",method,"failures"))
+                        set ^||TMP("S",suite,"C",case,"M",method,"failure")=$get(^||TMP("S",suite,"C",case,"M",method,"failure"))
+                            _$listget(^UnitTest.Result(i,suite,case,method,assert),2)
+                            _": "_$listget(^UnitTest.Result(i,suite,case,method,assert),3)
+                            _$char(13,10)
+                    }
+                }
+                if ($listget(^UnitTest.Result(i,suite,case,method))=0)
+                && ('$data(^||TMP("S",suite,"C",case,"M",method,"failures"))) {
+                    if $increment(^||TMP("S",suite,"failures"))
+                    if $increment(^||TMP("S",suite,"C",case,"failures"))
+                    if $increment(^||TMP("S",suite,"C",case,"M",method,"failures"))
+                    set ^||TMP("S",suite,"C",case,"M",method,"failure")=$get(^||TMP("S",suite,"C",case,"M",method,"failure"))
+                        _$listget(^UnitTest.Result(i,suite,case,method),3)
+                        _": "_$listget(^UnitTest.Result(i,suite,case,method),4)
+                        _$char(13,10)
+                }
+            }
+            
+            if $listget(^UnitTest.Result(i,suite,case))=0
+            && ('$data(^||TMP("S",suite,"C",case,"failures"))) {
+                if $increment(^||TMP("S",suite,"failures"))
+                if $increment(^||TMP("S",suite,"C",case,"failures"))
+                if $increment(^||TMP("S",suite,"C",case,"M",case,"failures"))
+                set ^||TMP("S",suite,"C",case,"M",case,"failure")=$get(^||TMP("S",suite,"C",case,"M",case,"failure"))
+                    _$listget(^UnitTest.Result(i,suite,case),3)
+                    _": "_$listget(^UnitTest.Result(i,suite,case),4)
+                    _$char(13,10)
+            }
+        }
+    }
+    
+    do File.Open("WSN")
+    do File.WriteLine("<?xml version=""1.0"" encoding=""UTF-8"" ?>")
+    do File.WriteLine("<testsuites>")
+    set suite="" for {
+        set suite=$order(^||TMP("S",suite))
+        quit:suite=""
+        do File.Write("<testsuite")
+        do File.Write(" name="""_$zstrip($zconvert($zconvert(suite,"O","XML"),"O","UTF8"),"<=>W")_"""")
+        do File.Write(" assertions="""_$get(^||TMP("S",suite,"assertions"))_"""")
+        do File.Write(" time="""_$get(^||TMP("S",suite,"time"))_"""")
+        do File.Write(" tests="""_$get(^||TMP("S",suite,"tests"))_"""")
+        do File.WriteLine(">")
+        set case="" for {
+            set case=$order(^||TMP("S",suite,"C",case))
+            quit:case=""
+            do File.Write("<testsuite")
+            do File.Write(" name="""_$zstrip($zconvert($zconvert(case,"O","XML"),"O","UTF8"),"<=>W")_"""")
+            do File.Write(" assertions="""_$get(^||TMP("S",suite,"C",case,"assertions"))_"""")
+            do File.Write(" time="""_$get(^||TMP("S",suite,"C",case,"time"))_"""")
+            do File.Write(" tests="""_$get(^||TMP("S",suite,"C",case,"tests"))_"""")
+            do File.WriteLine(">")
+            
+            set method="" for {
+                set method=$order(^||TMP("S",suite,"C",case,"M",method))
+                quit:method=""
+                do File.Write("<testcase")
+                do File.Write(" name="""_$zstrip($zconvert($zconvert(case,"O","XML"),"O","UTF8"),"<=>W")_"""")
+                do File.Write(" assertions="""_$get(^||TMP("S",suite,"C",case,"M",method,"assertions"))_"""")
+                do File.Write(" time="""_$get(^||TMP("S",suite,"C",case,"M",method,"time"))_"""")
+                do File.WriteLine(">")
+                if $data(^||TMP("S",suite,"C",case,"M",method,"failure")) {
+                    do File.Write("<failure type=""cache-error"" message=""Cache Error"">")
+                    do File.Write($zstrip($zconvert($zconvert(^||TMP("S",suite,"C",case,"M",method,"failure"),"O","XML"),"O","UTF8"),"<=>W"))
+                    do File.WriteLine("</failure>")
+                }
+                do File.WriteLine("</testcase>")
+            }
+            do File.WriteLine("</testsuite>")
+        }
+        do File.WriteLine("</testsuite>")
+    }
+    do File.WriteLine("</testsuites>")
+    do File.Close()
+    kill ^||TMP
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

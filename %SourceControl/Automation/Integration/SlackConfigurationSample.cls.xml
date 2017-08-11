@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Integration.SlackConfigurationSample">
+<Description>
+For new configuration, is necessary remane this archive for:
+%SourceControl.Automation.Integration.SlackConfiguration</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64506,36518.585824</TimeCreated>
+
+<Parameter name="SERVICE">
+<Description>
+URI integration Slack
+ex:/services/XXX/ZZZ/YYY</Description>
+<Default>/services/xxx/yyy/zzz</Default>
+</Parameter>
+
+<Parameter name="SSLuCONFIGURATION">
+<Description>
+Your configuration defined in portal administrion Caché(Configuration SSL/TLS)</Description>
+<Default>xxx</Default>
+</Parameter>
+
+<Parameter name="ICONuNOTIFY">
+<Description>
+Your icon of representation of enterprise</Description>
+<Default>https://www.yoursite.com/profile.png</Default>
+</Parameter>
+</Class>
+</Export>
