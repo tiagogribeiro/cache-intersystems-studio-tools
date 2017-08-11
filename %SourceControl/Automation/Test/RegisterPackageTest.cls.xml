@@ -11,16 +11,10 @@ Mapping packages of test legacy of ERP</Description>
 <FormalSpec><![CDATA[&map:%String]]></FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-        
-    set map("fi")="financeiro"
-    set map("cr")="financeiro.cr"
-    set map("cp")="financeiro.cp"
-    set map("cx")="financeiro.cx"
-    set map("mt")="material"
-    set map("ge")="geral"     
-    set map("app.modules.est.persistent")="material.ajuste"
+            
+    set map("fi")="financeiro"    
     
-    quit map
+    quit $get(map)
 ]]></Implementation>
 </Method>
 </Class>
