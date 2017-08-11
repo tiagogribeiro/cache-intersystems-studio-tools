@@ -918,7 +918,7 @@ if <var>force</var> = 1 then imports in any case.]]></Description>
                 set sc = $$$ADDSC(sc, ..FixProjectCspReferences(InternalName))
             }
             write InternalName," has been imported from ", filename,!            
-            do ##class(%SourceControl.AutomatizeCompilation).add( InternalName ) // Tiago G. Ribeiro
+            do ##class(%SourceControl.Automation.AutomatizeCompilation).add( InternalName ) // Tiago G. Ribeiro
         } else {
             write "ERROR importing" ,InternalName,!
             do $system.Status.DisplayError(sc)
@@ -1168,9 +1168,9 @@ if <var>force</var> = 1 then we import item even if timestamp in system is newer
 <Implementation><![CDATA[
     #dim status As %Status
     $$$QuitOnError(..ImportSCList())
-    do ##class(%SourceControl.AutomatizeCompilation).clear() // Tiago G. Ribeiro
+    do ##class(%SourceControl.Automation.AutomatizeCompilation).clear() // Tiago G. Ribeiro
     set status = ..ImportRoutines(force)
-    do ##class(%SourceControl.AutomatizeCompilation).compile() // Tiago G. Ribeiro
+    do ##class(%SourceControl.Automation.AutomatizeCompilation).compile() // Tiago G. Ribeiro
     quit status
 ]]></Implementation>
 </Method>
