@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Git.Utils">
+<Description>
+Code of repository:
+https://github.com/intersystems-ru/cache-tort-git </Description>
 <Abstract>1</Abstract>
 <IncludeCode>%occStatus,%occErrors</IncludeCode>
 <ProcedureBlock>1</ProcedureBlock>
@@ -915,7 +918,7 @@ if <var>force</var> = 1 then imports in any case.]]></Description>
                 set sc = $$$ADDSC(sc, ..FixProjectCspReferences(InternalName))
             }
             write InternalName," has been imported from ", filename,!            
-            do ##class(AutomatizeCompilation).add( InternalName ) // Tiago G. Ribeiro
+            do ##class(%SourceControl.AutomatizeCompilation).add( InternalName ) // Tiago G. Ribeiro
         } else {
             write "ERROR importing" ,InternalName,!
             do $system.Status.DisplayError(sc)
@@ -1165,9 +1168,9 @@ if <var>force</var> = 1 then we import item even if timestamp in system is newer
 <Implementation><![CDATA[
     #dim status As %Status
     $$$QuitOnError(..ImportSCList())
-    do ##class(AutomatizeCompilation).clear() // Tiago G. Ribeiro
+    do ##class(%SourceControl.AutomatizeCompilation).clear() // Tiago G. Ribeiro
     set status = ..ImportRoutines(force)
-    do ##class(AutomatizeCompilation).compile() // Tiago G. Ribeiro
+    do ##class(%SourceControl.AutomatizeCompilation).compile() // Tiago G. Ribeiro
     quit status
 ]]></Implementation>
 </Method>
