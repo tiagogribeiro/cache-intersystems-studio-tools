@@ -56,14 +56,14 @@
 <Private>1</Private>
 <Implementation><![CDATA[
       
-    #dim text = ..getUserName()_" rodou os teste do pacote/classe: "_file    
+    #dim text = $$$FormatText($$$Text("@Slack.TituloMensagem@%1 rodou os teste do pacote/classe: %2","%StudioTools"),..getUserName(), file)    
     #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
     #dim id = captureResult.getLastId()
     
     #dim body = captureResult.colectorListClassTestedWidthError().getListInLine()         
     #dim link = captureResult.getLink()
     #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()
-    #dim title = id_" - Houve falha nos testes"
+    #dim title = $$$FormatText($$$Text("@Slack.MensagemFalha@%1 - Houve falha nos testes","%StudioTools"),id)    
     #dim timeAll = captureResult.getTimeAll()
     
     do ..send( ..jsonText( title, text, body, "#FF0000", timeAll, totalization, link ) )
@@ -77,11 +77,11 @@
 <Private>1</Private>
 <Implementation><![CDATA[
       
-    #dim text = ..getUserName()_" rodou os teste do pacote/classe: "_file    
+    #dim text = $$$FormatText($$$Text("@Slack.TituloMensagem@%1 rodou os teste do pacote/classe: %2","%StudioTools"),..getUserName(), file)
     #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
     #dim timeAll = captureResult.getTimeAll()
     #dim id = captureResult.getLastId()        
-    #dim title = id_" - Todos os testes passaram"
+    #dim title = $$$FormatText($$$Text("@Slack.MensagemSucesso@","%StudioTools"),id)
     #dim link = captureResult.getLink()
     #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()     
     
@@ -125,14 +125,14 @@
             "title" : (title),
             "title_link" : (linkResults),
             "text" : (body),
-            "footer": "Testes Automatizados",
+            "footer": ($$$Text("@Slack.RodapeMensage@Testes Automatizados","%Studio.Tools")),
             "footer_icon": (..#ICONuNOTIFY),
             "fields": [{
-                "title": "Tempo total",
+                "title": ($$$Text("@Slack.TempoTotal@Tempo total","%Studio.Tools")),
                 "short": "true",
                 "value": (timeFlag)
             },{
-                "title": "Resultado",
+                "title": ($$$Text("@Slack.Resultado@Resultado","%Studio.Tools")),
                 "short": "true",
                 "value": (totalizationFinal)
             }]

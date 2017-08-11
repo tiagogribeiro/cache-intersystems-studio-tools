@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Automation.Integration.CaptureResult">
+<Description>
+Capture results of your testing, results view in portal unit test in portal administrion Caché</Description>
 <Super>%RegisteredObject</Super>
 <TimeCreated>64408,30730.655183</TimeCreated>
 
@@ -109,7 +111,7 @@
             set success = $increment(success)
         }
     }
-    set ..totalization = $$$FormatText("%1 executado(s) com sucesso e %2 com erro(s).", success, errors )
+    set ..totalization = $$$FormatText($$$Text("@ExecutadoComSucessoEErros@%1 executado(s) com sucesso e %2 com erro(s).","%Studio.Tools"), success, errors )
     quit ##this
 ]]></Implementation>
 </Method>
@@ -142,7 +144,7 @@
         set separator = $select(inline="":"",1:"\n")
         
         if (count = limit){
-            set text = "mais..."
+            set text = $$$Text("@Mais@mais", "%Studio.Tools")
             set inline = inline_separator_text
             quit
         }

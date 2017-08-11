@@ -19,17 +19,17 @@
     set lastName = ##class(ActionMenuUtil).getLastNameMenu( name )
     
     set DisplayName = $case(lastName,   
-                "%TestUnitarioContext" : "Testar",          ; Do not move, context menu.
-                "%TestUnitario" : "Testar",                 ; Do not move, main menu.
-                "%TestClass" : "Testar esta classe",                
-                "%TestAndCompile" : "Compilar e testar esta classe",
-                "%TestAllClass" : "Testar o suíte completo",
-                "%TestPackage" : "Testar o pacote",
-                "%TestLastTest" : "Rodar o último teste",
-                "%TestClearResult" : "Limpar os resultados dos testes",
-                "%TestClearPopulate" : "Limpar os dados do Populate",
-                "%TestAutomaticOff" : "Desabilitar - Compilar e testar",
-                "%TestAutomaticOn" : "Habilitar - Compilar e testar",
+                "%TestUnitarioContext" : $$$Text("@Menu.Testar@Testar","%Studio.Tools"),          ; Do not move, context menu.
+                "%TestUnitario" :$$$Text("@Menu.Testar@Testar","%Studio.Tools"),                 ; Do not move, main menu.
+                "%TestClass" : $$$Text("@Menu.TestarClasse@Testar esta classe","%Studio.Tools"),                
+                "%TestAndCompile" : $$$Text("@Menu.CompilarETestar@Compilar e testar esta classe","%Studio.Tools"),
+                "%TestAllClass" : $$$Text("@Menu.TestarSuiteCompleto@Testar o suíte completo","%Studio.Tools"),
+                "%TestPackage" : $$$Text("@Menu.TestarPacote@Testar o pacote","%Studio.Tools"),
+                "%TestLastTest" : $$$Text("@Menu.RodarUltimoTeste@Rodar o último teste","%Studio.Tools"),
+                "%TestClearResult" : $$$Text("@Menu.LimparResultadoTeste@Limpar os resultados dos testes","%Studio.Tools"),
+                "%TestClearPopulate" : $$$Text("@Menu.LimparDadosPopulate@Limpar os dados do Populate","%Studio.Tools"),
+                "%TestAutomaticOff" : $$$Text("@Menu.DesabilitarAutoTeste@Desabilitar - Compilar e testar","%Studio.Tools"),
+                "%TestAutomaticOn" : $$$Text("@Menu.HabilitarAutoTeste@Habilitar - Compilar e testar","%Studio.Tools"),
                 :DisplayName)
     
     quit $$$OK

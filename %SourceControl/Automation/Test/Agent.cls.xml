@@ -51,7 +51,7 @@
     #dim return as %Status
     #dim currentNamespace as %String = $namespace
     
-    write !,"Executando teste para: '"_file_"'"    
+    write !,$$$FormatText($$$Text( "@ExecutandoTeste@Executando teste para: %1", "%Studio.Tools"), file)
     
     do ..changeNamespaceForTest()
     
@@ -76,7 +76,8 @@
     set namespaceAllows = $listFromString(..#NAMESPACEuALLOWSuTEST, ",")
     
     if ($listFind(namespaceAllows, $namespace) = 0) {
-        write !,"Namespace atual: "_$namespace 
+        
+        write !,$$$FormatText($$$Text( "@NamespaceAtual@Namespace atual: %1", "%Studio.Tools"), $namespace )
         
         if ($namespace = "ERPCDW") {
             znspace ..#NAMESPACEuTESTuDEVELOPMENT
@@ -86,7 +87,7 @@
             znspace ..#NAMESPACEuTESTuHOMOLOGATION
         } 
         
-        write !,"Alterado namespace atual para namespace de teste: "_$namespace
+        write !,$$$FormatText($$$Text( "@AlterandoNamespaceTeste@Alterado namespace atual para namespace de teste: %1", "%Studio.Tools"), $namespace )
     }
 ]]></Implementation>
 </Method>
@@ -98,7 +99,7 @@
 <Implementation><![CDATA[
     if (namespaceWork '= $namespace) {
         znspace namespaceWork
-        write !,"Retornado ao namespace atual: "_$namespace        
+        write !,$$$FormatText($$$Text( "@RetornandoNamespaceAtual@Retornado ao namespace atual: %1", "%Studio.Tools"), $namespace )
     }
 ]]></Implementation>
 </Method>

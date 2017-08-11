@@ -271,6 +271,7 @@ Called before Studio checks for the timestamp of an item.</Description>
     ; Desabilitado pois ao importar um arquivo não estava deixando o arquivo importado
     ; e sempre reimportando o do disco.
     ;do ##class(Utils).ImportItem(InternalName)
+    do ##class(%SourceControl.Instalation.Manager).install()
     Quit
 ]]></Implementation>
 </Method>

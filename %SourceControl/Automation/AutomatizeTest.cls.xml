@@ -250,11 +250,11 @@
             do:(method="") $classMethod("%SourceControl.Automation.Test.Agent","run",..classNameTest)
          } else {
              if (..isTestable(..classNameComplete)){
-                write !,"[TesteUnitário] - Esta classe não possui uma classe de teste."
+                write !,$$$Text("@Test.SemClasseDeTeste@[TesteUnitário] - Esta classe não possui uma classe de teste.","%Studio.Tools")
              }
          }
     } else {
-        write !,"[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes."
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
     }
     quit $$$OK
 ]]></Implementation>
@@ -266,7 +266,7 @@
     if (..isManagerExist()){
             do $classMethod("%SourceControl.Automation.Test.Agent","run")
     } else {
-        write !,"[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes."
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
     }
     quit $$$OK
 ]]></Implementation>
@@ -279,7 +279,7 @@
     if (..isManagerExist()){
             do $classMethod("%SourceControl.Automation.Test.Agent","run", package)
     } else {
-        write !,"[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes."
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
     }
     quit $$$OK
 ]]></Implementation>
@@ -331,10 +331,10 @@
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     if ('..isRunTest()){
-        write !,"[TestUnitário] - Automatize seus testes, crie uma classe de teste."
+        write !,$$$Text("@Test.AlertSemClasseTeste@[TestUnitário] - Automatize seus testes, crie uma classe de teste.","%Studio.Tools")
     } else {
-         if (+##class(%SourceControl.OptionState).getOption("%TestAutomatic")=$$$NO){
-            write !,"[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(%SourceControl.Automation.Test.Agent).run("""_..classNameTest_""")"
+         if (+##class(%SourceControl.OptionState).getOption("%TestAutomatic")=$$$NO){                        
+            write !,$$$FormatText($$$Text("@Test.IncentivarRodarTeste@[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(%SourceControl.Automation.Test.Agent).run(""%1"")","%Studio.Tools"),..classNameTest)
          }
     }
 ]]></Implementation>

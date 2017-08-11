@@ -6,7 +6,7 @@
 
 <Parameter name="STORAGE">
 <Final>1</Final>
-<Default>^Studio.Option</Default>
+<Default>^%Studio.Option</Default>
 </Parameter>
 
 <Method name="%OnNew">
