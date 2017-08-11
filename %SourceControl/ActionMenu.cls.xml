@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.ActionMenu">
+<Import>%SourceControl.Automation</Import>
+<Super>Menu</Super>
+<TimeCreated>64281,37672.152777</TimeCreated>
+
+<Method name="testAndCompile">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAndCompile"){
+       if ( $system.OBJ.Compile(##class(AutomatizeUtil).getNameFileNotExtension( ..internalName )) ){            
+            do:(..selectedText'="") ##class(AutomatizeTest).%New(..internalName).run(..selectedText)
+            do:(..selectedText="") ##class(AutomatizeTest).%New(..internalName).run()
+       }
+        quit $$$YES
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testClass">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClass"){
+        do:(..selectedText'="") ##class(AutomatizeTest).createFrom(..internalName).run(..selectedText)
+        do:(..selectedText="") ##class(AutomatizeTest).createFrom(..internalName).run()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testAllSuite">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAllClass"){
+        do ##class(AutomatizeTest).createFrom(..internalName).runAllSuite()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testInPackage">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if ( ##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestPackage" ){
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(..internalName)
+        do ##class(AutomatizeTest).createFrom(..internalName).runPackage( package )
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testLastTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestLastTest"){
+        do ##class(AutomatizeTest).createFrom(..internalName).runLastTest()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="cleanResultsOfTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClearResult"){
+        do ##class(AutomatizeTest).create().clearResult()     
+    }
+]]></Implementation>
+</Method>
+
+<Method name="cleanPluginPopulate">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClearPopulate"){
+        do ##class(AutomatizeTest).create().clearPopulate()     
+    }
+]]></Implementation>
+</Method>
+
+<Method name="activeAutomaticTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOn"){        
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$YES)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveAutomaticTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOff"){
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$NO)        
+    }
+]]></Implementation>
+</Method>
+
+<Method name="execute">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String,InternalName:%String,SelectedText</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    set action = ..%New( name, InternalName, SelectedText )
+    do action.testAndCompile()
+    do action.testClass()    
+    do action.testAllSuite()
+    do action.testInPackage()
+    do action.testLastTest()
+    do action.cleanResultsOfTest()
+    do action.cleanPluginPopulate()
+    do action.activeAutomaticTest()
+    do action.inactiveAutomaticTest()
+    
+    quit $$$NO
+]]></Implementation>
+</Method>
+</Class>
+</Export>

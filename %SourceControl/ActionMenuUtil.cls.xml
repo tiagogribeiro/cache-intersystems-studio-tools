@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.ActionMenuUtil">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64506,31537.69372</TimeCreated>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="getLastNameMenu">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit $piece(name,",",$length(name,","))
+]]></Implementation>
+</Method>
+</Class>
+</Export>

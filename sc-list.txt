@@ -1,3 +1,16 @@
+%SourceControl.ActionMenu.cls
+%SourceControl.ActionMenuStatus.cls
+%SourceControl.ActionMenuUtil.cls
+%SourceControl.Automation.AutomatizeCompilation.cls
+%SourceControl.Automation.AutomatizeTest.cls
+%SourceControl.Automation.AutomatizeUtil.cls
+%SourceControl.Automation.INTEGRATION
+%SourceControl.Automation.Integration.CaptureResult.cls
+%SourceControl.Automation.Integration.Jenkins.cls
+%SourceControl.Automation.Integration.Slack.cls
+%SourceControl.Automation.Integration.SlackConfigurationSample.cls
+%SourceControl.Automation.Test.Agent.cls
+%SourceControl.Automation.Test.RegisterPackageTest.cls
 %SourceControl.Git.ActionMenu.cls
 %SourceControl.Git.ActionMenuStatus.cls
 %SourceControl.Git.ActionMenuUtil.cls
@@ -11,6 +24,9 @@
 %SourceControl.Git.TranslateMenu.cls
 %SourceControl.Git.Utils.cls
 %SourceControl.Git.cls
+%SourceControl.Menu.cls
+%SourceControl.OptionState.cls
+%SourceControl.TranslateMenu.cls
 %SourceControl.git
 /%SourceControl
 <cspapp>/gitprojectsettings.csp

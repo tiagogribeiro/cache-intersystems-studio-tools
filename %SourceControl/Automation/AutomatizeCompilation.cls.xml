@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.AutomatizeCompilation">
+<Final>1</Final>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64265,32941.909521</TimeCreated>
+
+<Parameter name="REPOSITORY">
+<Final>1</Final>
+<Default>^Git.Compile</Default>
+</Parameter>
+
+<Parameter name="COMPILEuCLASS">
+<Final>1</Final>
+<Expression>$listBuild("mac","int","cls")</Expression>
+</Parameter>
+
+<Parameter name="COMPILE">
+<Final>1</Final>
+<Expression>$listBuild("mac","int","cls","csp","csr")</Expression>
+</Parameter>
+
+<Method name="isCompiledRule">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim RULE = "csr"
+    #dim file = ""
+    for {
+        set file = $order(@..#REPOSITORY@(file),1)
+        quit:(file="")
+        if (##class(AutomatizeUtil).getExtension(file) = RULE){
+            return $$$YES
+        }
+    }
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Method name="compileClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ($listFind(..#COMPILEuCLASS,##class(AutomatizeUtil).getExtension(file))>0){
+        #dim status As %Status
+        set status = $SYSTEM.OBJ.Compile(##class(AutomatizeUtil).getNameFileNotExtension(file))
+        do ..registerCompile(file, status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileRule">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (##class(AutomatizeUtil).getExtension(file) = "csr"){   
+        #dim status As %Status = $SYSTEM.CSP.LoadRuleFile(file)
+        do ..registerCompile(file,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileCSP">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(AutomatizeUtil).getExtension(file)="csp") && '..isCompiledRule(){
+        #dim status As %Status = $SYSTEM.CSP.LoadPage(file) 
+        do ..registerCompile(file,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileCSPDir">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim dir As %String = ..getDir()    
+    if (dir'="")&&(..isCompiledRule()){
+        
+        #dim status = "Compile all in process..."
+        do ..registerCompile(dir,status)
+        
+        set status = $SYSTEM.CSP.LoadPageDir(dir)        
+        
+        do ..registerCompile(dir,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="registerCompile">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String,status:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[    set @..#REPOSITORY@(file)=status
+]]></Implementation>
+</Method>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="compile">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    #dim file = ""
+    for {
+        set file = $order(@..#REPOSITORY@(file),1)
+        quit:(file="")
+        
+        do ..compileRule(file)
+        do ..compileClass(file)        
+        do ..compileCSP(file)        
+    }
+    
+    do ..compileCSPDir()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="clear">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    kill @..#REPOSITORY
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="add">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>internalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ($listFind(..#COMPILE,##class(AutomatizeUtil).getExtension(internalName))>0){
+        set @..#REPOSITORY@(internalName)=$$$NO
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getDir">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[    quit $$$FormatText("/%1/%2","csp",$namespace)
+]]></Implementation>
+</Method>
+</Class>
+</Export>

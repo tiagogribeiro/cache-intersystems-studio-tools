@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Test.Agent">
+<Super>%RegisteredObject</Super>
+<TimeCreated>63973,40417.786247</TimeCreated>
+
+<Parameter name="NAMESPACEuTESTuDEVELOPMENT">
+<Final>1</Final>
+<Default>TESTEUNITARIO</Default>
+</Parameter>
+
+<Parameter name="NAMESPACEuTESTuHOMOLOGATION">
+<Final>1</Final>
+<Default>TESTEUNITARIOH</Default>
+</Parameter>
+
+<Parameter name="NAMESPACEuALLOWSuTEST">
+<Default>TESTEUNITARIO,TESTEUNITARIOH,CI</Default>
+</Parameter>
+
+<Parameter name="NAMESPACEuTESTuCI">
+<Final>1</Final>
+<Default>CI</Default>
+</Parameter>
+
+<Parameter name="PACKAGEuDEFAULT">
+<Final>1</Final>
+<Default>test</Default>
+</Parameter>
+
+<Method name="clear">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%SourceControl.Automation.Test.Agent</ReturnType>
+<Implementation><![CDATA[
+    #dim currentNamespace as %String = $namespace
+
+    do ..changeNamespaceForTest()
+    do ##class(test.util.PopulateTools).purgeDados( force )
+    do ..backToTheCurrentNamespace(currentNamespace)
+    
+    quit ..%New()
+]]></Implementation>
+</Method>
+
+<Method name="run">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String=..#PACKAGEuDEFAULT,method:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim return as %Status
+    #dim currentNamespace as %String = $namespace
+    
+    write !,"Executando teste para: '"_file_"'"    
+    
+    do ..changeNamespaceForTest()
+    
+    if (..isTestClass(file)) {
+        set return = ..runTestByClass(file, method)
+    } else {
+        set return = ..runTestByPack(file)
+    }
+    
+    job ..notifyIntregations(file, method)::0
+    do ..backToTheCurrentNamespace(currentNamespace)
+    
+    quit return
+]]></Implementation>
+</Method>
+
+<Method name="changeNamespaceForTest">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim namespaceAllows As %String    
+    set namespaceAllows = $listFromString(..#NAMESPACEuALLOWSuTEST, ",")
+    
+    if ($listFind(namespaceAllows, $namespace) = 0) {
+        write !,"Namespace atual: "_$namespace 
+        
+        if ($namespace = "ERPCDW") {
+            znspace ..#NAMESPACEuTESTuDEVELOPMENT
+        } elseif($namespace = "CI"){
+            znspace ..#NAMESPACEuTESTuCI
+        } else {
+            znspace ..#NAMESPACEuTESTuHOMOLOGATION
+        } 
+        
+        write !,"Alterado namespace atual para namespace de teste: "_$namespace
+    }
+]]></Implementation>
+</Method>
+
+<Method name="backToTheCurrentNamespace">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>namespaceWork:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (namespaceWork '= $namespace) {
+        znspace namespaceWork
+        write !,"Retornado ao namespace atual: "_$namespace        
+    }
+]]></Implementation>
+</Method>
+
+<Method name="isTestClass">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String=..#PACKAGEuDEFAULT</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim pieceList, lastPiece as %String = ""
+    
+    set pieceList = $listFromString(file, ".")
+    set lastPiece = $listGet(pieceList, $listLength(pieceList))
+    
+    quit ($extract(lastPiece, 1, 4) = "Test")
+]]></Implementation>
+</Method>
+
+<Method name="runTestByClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testCase,method=""</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ##class(test.Manager).DebugRunTestCase("", testCase,"",method)
+]]></Implementation>
+</Method>
+
+<Method name="runTestByPack">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>package:%String=..#PACKAGEuDEFAULT</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+   #dim fileName As %String = $get(^UnitTestRoot)_"\PackageTests.xml"
+   
+   do $SYSTEM.OBJ.ExportPackage( package, fileName )
+   quit ##class(test.Manager).RunTest(,"/nodelete")
+]]></Implementation>
+</Method>
+
+<Method name="clearResult">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim namespace As %String = $namespace
+    do ..changeNamespaceForTest()
+    do ##class(test.Manager).PurgeResult()
+    do ..backToTheCurrentNamespace(namespace)
+]]></Implementation>
+</Method>
+
+<Method name="clearPopulate">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim namespace As %String = $namespace
+    do ..changeNamespaceForTest()
+    do $classmethod("test.util.PopulateTools","purgeDados")
+    do ..backToTheCurrentNamespace(namespace)
+]]></Implementation>
+</Method>
+
+<Method name="notifyIntregations">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String,method:%String</FormalSpec>
+<Implementation><![CDATA[
+    if ($namespace '= "CI"){    
+        if (##class(%SourceControl.Automation.AutomatizeUtil).isClassCompiled("%SourceControl.Automation.Integration.Slack")){        
+            do ##class(%SourceControl.Automation.Integration.Slack).notify( file )
+        }
+    }
+]]></Implementation>
+</Method>
+</Class>
+</Export>
