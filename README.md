@@ -30,5 +30,9 @@ It's not necessary configuration if not is shared environment
 - 2016.1.3.306.0.
 
 # Installing
+- Enable written in database "CacheSYS" by Portal Caché DataBases
 - Import project in namespace %SYS
 - In version control enable: %SourceControl.Git
+
+The version control configuration should follow the repository: 
+https://github.com/intersystems-ru/cache-tort-git 
