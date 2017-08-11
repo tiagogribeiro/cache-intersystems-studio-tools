@@ -5,6 +5,13 @@
 <Super>Menu</Super>
 <TimeCreated>64281,37672.152777</TimeCreated>
 
+<UDLText name="T">
+<Content><![CDATA[
+// @Todo Aplicar pattern Chain Of Responsibility - Suegestão.
+
+]]></Content>
+</UDLText>
+
 <Method name="testAndCompile">
 <Private>1</Private>
 <Implementation><![CDATA[

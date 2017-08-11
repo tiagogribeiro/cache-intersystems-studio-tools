@@ -5,6 +5,13 @@
 <Super>Menu</Super>
 <TimeCreated>64506,31209.7456</TimeCreated>
 
+<UDLText name="T">
+<Content><![CDATA[
+// @Todo Aplicar pattern Chain Of Responsibility - Suegestão.
+
+]]></Content>
+</UDLText>
+
 <Property name="automatizeTest">
 <Type>AutomatizeTest</Type>
 <Private>1</Private>
