@@ -16,6 +16,8 @@ Added item:
 - Clear data of plugin. (populate - This plugin soon it will be available in GitHub, it's not default class %Populate)
 - Enable and Disabled auto test after compile.
 
+It's necessary class test.Agent for testing automatized with compile. (This class it will be available in GitHub)
+
 # Configuration
 In environment shared is necessary configure the mapping globas of data configuration(ECP).
 - ^Studio.Option - Data of options menu Studio
