@@ -27,4 +27,8 @@ It's not necessary configuration if not is shared environment
 
 # Testing in: 
 - 2013.1.1
-- 2016.1.3.306.0
+- 2016.1.3.306.0.
+
+# Installing
+- Import project in namespace %SYS
+- In version control enable: %SourceControl.Git
