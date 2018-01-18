@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Instalation.Manager">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64666,36238.556428</TimeCreated>
+
+<Method name="install">
+<ClassMethod>1</ClassMethod>
+</Method>
+</Class>
+</Export>

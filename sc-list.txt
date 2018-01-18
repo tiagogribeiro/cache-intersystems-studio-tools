@@ -24,6 +24,7 @@
 %SourceControl.Git.TranslateMenu.cls
 %SourceControl.Git.Utils.cls
 %SourceControl.Git.cls
+%SourceControl.Instalation.Manager.cls
 %SourceControl.Menu.cls
 %SourceControl.OptionState.cls
 %SourceControl.TranslateMenu.cls
