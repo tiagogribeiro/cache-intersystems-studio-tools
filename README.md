@@ -35,6 +35,13 @@ Reload your studio, then it will installed language according your language defi
 - Import project in namespace %SYS
 - In version control enable: %SourceControl.Git
 
+Important, if you do not compile due to error 'SlackConfiguration does not exist' 
+It is necessary to configure integration with Slack, rename the 
+'% SourceControl.Autotamtion.Integration.SlackConfigurationSample' class to 
+'% SourceControl.Autotamtion.Integration.SlackConfiguration' and recompile the '% SourceControl'
+
+If you did not want the integration to be enabled, just rename the file and do not do any service configuration.
+
 The version control configuration should follow the repository: 
 https://github.com/intersystems-ru/cache-tort-git 
 
