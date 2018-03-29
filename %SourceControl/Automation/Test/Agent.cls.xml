@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Automation.Test.Agent">
-<Super>%RegisteredObject</Super>
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
 <TimeCreated>63973,40417.786247</TimeCreated>
-
-<Parameter name="NAMESPACEuTESTuDEVELOPMENT">
-<Final>1</Final>
-<Default>TESTEUNITARIO</Default>
-</Parameter>
-
-<Parameter name="NAMESPACEuTESTuHOMOLOGATION">
-<Final>1</Final>
-<Default>TESTEUNITARIOH</Default>
-</Parameter>
-
-<Parameter name="NAMESPACEuALLOWSuTEST">
-<Default>TESTEUNITARIO,TESTEUNITARIOH,CI</Default>
-</Parameter>
-
-<Parameter name="NAMESPACEuTESTuCI">
-<Final>1</Final>
-<Default>CI</Default>
-</Parameter>
 
 <Parameter name="PACKAGEuDEFAULT">
 <Final>1</Final>
@@ -34,7 +15,7 @@
 <ReturnType>%SourceControl.Automation.Test.Agent</ReturnType>
 <Implementation><![CDATA[
     #dim currentNamespace as %String = $namespace
-
+    
     do ..changeNamespaceForTest()
     do ##class(test.util.PopulateTools).purgeDados( force )
     do ..backToTheCurrentNamespace(currentNamespace)
@@ -72,22 +53,16 @@
 <ClassMethod>1</ClassMethod>
 <Private>1</Private>
 <Implementation><![CDATA[
-    #dim namespaceAllows As %String    
-    set namespaceAllows = $listFromString(..#NAMESPACEuALLOWSuTEST, ",")
+    #dim namespaceAllow As %String
+    set namespaceAllow = ..getStorageValue("UnitTest","namespace")
     
-    if ($listFind(namespaceAllows, $namespace) = 0) {
-        
-        write !,$$$FormatText($$$Text( "@NamespaceAtual@Namespace atual: %1", "%Studio.Tools"), $namespace )
-        
-        if ($namespace = "ERPCDW") {
-            znspace ..#NAMESPACEuTESTuDEVELOPMENT
-        } elseif($namespace = "CI"){
-            znspace ..#NAMESPACEuTESTuCI
-        } else {
-            znspace ..#NAMESPACEuTESTuHOMOLOGATION
-        } 
-        
+    write !,$$$FormatText($$$Text( "@NamespaceAtual@Namespace atual: %1", "%Studio.Tools"), $namespace )
+    
+    if (namespaceAllow '=""){
+        zn namespaceAllow
         write !,$$$FormatText($$$Text( "@AlterandoNamespaceTeste@Alterado namespace atual para namespace de teste: %1", "%Studio.Tools"), $namespace )
+    } else {
+        write !,$$$Text( "@ConfigNamespaceTesteNaoExiste@Não existe um namespace de teste configurado, por favor configure executando: 'do ##class(%SourceControl.Instalation.Manager).install()' no seu namespace de trabalho.", "%Studio.Tools")
     }
 ]]></Implementation>
 </Method>

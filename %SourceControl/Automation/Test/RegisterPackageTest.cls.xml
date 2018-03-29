@@ -12,7 +12,12 @@ Mapping packages of test legacy of ERP</Description>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
             
-    set map("fi")="financeiro"    
+    set map("fi")="financeiro"
+    set map("cp")="financeiro.cp"
+    set map("cr")="financeiro.cr"
+    set map("cx")="financeiro.cr"
+    set map("ge")="geral"
+    set map("mt")="materiais"        
     
     quit $get(map)
 ]]></Implementation>

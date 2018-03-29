@@ -29,5 +29,6 @@
 %SourceControl.OptionState.cls
 %SourceControl.TranslateMenu.cls
 %SourceControl.git
+%SourceControl.pkg
 /%SourceControl
 <cspapp>/gitprojectsettings.csp

@@ -2,12 +2,8 @@
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Automation.AutomatizeTest">
 <Import>%SourceControl.Automation.Test</Import>
-<Super>%RegisteredObject</Super>
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
 <TimeCreated>64261,63233.601792</TimeCreated>
-
-<Parameter name="STORAGE">
-<Default>^mtempAutomatizeTest</Default>
-</Parameter>
 
 <Parameter name="FILEuTESTABLE">
 <Expression>$listBuild("cls")</Expression>
@@ -315,14 +311,15 @@
 <Method name="registerLastTest">
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    set @..#STORAGE@("lastTest",$namespace,$username)=..classNameTest
+    
+    do ..setStorageValue("UnitTest-LastTest", $namespace, ..classNameTest )
     quit $$$OK
 ]]></Implementation>
 </Method>
 
 <Method name="getLastTest">
 <ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    quit $get(@..#STORAGE@("lastTest",$namespace,$username))
+<Implementation><![CDATA[    quit ..getStorageValue("UnitTest-LastTest", $namespace )
 ]]></Implementation>
 </Method>
 
@@ -331,10 +328,10 @@
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
     if ('..isRunTest()){
-        write !,$$$Text("@Test.AlertSemClasseTeste@[TestUnitário] - Automatize seus testes, crie uma classe de teste.","%Studio.Tools")
+        write !,$$$Text("@Test.AlertSemClasseTeste@[TesteUnitário] - Automatize seus testes, crie uma classe de teste.","%Studio.Tools")
     } else {
          if (+##class(%SourceControl.OptionState).getOption("%TestAutomatic")=$$$NO){                        
-            write !,$$$FormatText($$$Text("@Test.IncentivarRodarTeste@[TestUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(%SourceControl.Automation.Test.Agent).run(""%1"")","%Studio.Tools"),..classNameTest)
+            write !,$$$FormatText($$$Text("@Test.IncentivarRodarTeste@[TesteUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(%SourceControl.Automation.Test.Agent).run(""%1"")","%Studio.Tools"),..classNameTest)
          }
     }
 ]]></Implementation>

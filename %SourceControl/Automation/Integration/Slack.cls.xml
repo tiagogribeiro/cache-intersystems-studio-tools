@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Automation.Integration.Slack">
-<Super>%RegisteredObject,SlackConfiguration</Super>
+<Super>%RegisteredObject,SlackConfiguration,%SourceControl.Automation.AutomatizeStorage</Super>
 <TimeCreated>64407,61564.853977</TimeCreated>
 
 <Parameter name="URIuSLACK">
 <Default>hooks.slack.com</Default>
-</Parameter>
-
-<Parameter name="GLOBALuUSERuNAME">
-<Default>^UnitTest.UserName</Default>
 </Parameter>
 
 <Parameter name="ENABLE">
@@ -20,7 +16,7 @@
 <ClassMethod>1</ClassMethod>
 <Private>1</Private>
 <ReturnType>%Boolean</ReturnType>
-<Implementation><![CDATA[    quit ($get(@..#ENABLE,0) = $$$YES)
+<Implementation><![CDATA[    quit (+..getStorageValue("Integration","SlackEnable") = $$$YES)
 ]]></Implementation>
 </Method>
 
@@ -29,7 +25,7 @@
 <Private>1</Private>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-    #dim userName = $get(@..#GLOBALuUSERuNAME)
+    #dim userName = ..getStorageValue("Integration","SlackUser")
     quit $select(userName="":$ZU(110),1:userName)
 ]]></Implementation>
 </Method>

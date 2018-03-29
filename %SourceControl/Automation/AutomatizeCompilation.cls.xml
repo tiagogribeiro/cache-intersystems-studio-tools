@@ -2,13 +2,8 @@
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Automation.AutomatizeCompilation">
 <Final>1</Final>
-<Super>%RegisteredObject</Super>
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
 <TimeCreated>64265,32941.909521</TimeCreated>
-
-<Parameter name="REPOSITORY">
-<Final>1</Final>
-<Default>^Git.Compile</Default>
-</Parameter>
 
 <Parameter name="COMPILEuCLASS">
 <Final>1</Final>
@@ -28,7 +23,7 @@
     #dim RULE = "csr"
     #dim file = ""
     for {
-        set file = $order(@..#REPOSITORY@(file),1)
+        set file = $order(@..#STORAGEuCOMPILE@(file),1)
         quit:(file="")
         if (##class(AutomatizeUtil).getExtension(file) = RULE){
             return $$$YES
@@ -102,7 +97,7 @@
 <ClassMethod>1</ClassMethod>
 <FormalSpec>file:%String,status:%String</FormalSpec>
 <Private>1</Private>
-<Implementation><![CDATA[    set @..#REPOSITORY@(file)=status
+<Implementation><![CDATA[    set @..#STORAGEuCOMPILE@(file)=status
 ]]></Implementation>
 </Method>
 
@@ -119,7 +114,7 @@
     
     #dim file = ""
     for {
-        set file = $order(@..#REPOSITORY@(file),1)
+        set file = $order(@..#STORAGEuCOMPILE@(file),1)
         quit:(file="")
         
         do ..compileRule(file)
@@ -137,7 +132,7 @@
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    kill @..#REPOSITORY
+    kill @..#STORAGEuCOMPILE
     quit $$$OK
 ]]></Implementation>
 </Method>
@@ -148,7 +143,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     if ($listFind(..#COMPILE,##class(AutomatizeUtil).getExtension(internalName))>0){
-        set @..#REPOSITORY@(internalName)=$$$NO
+        set @..#STORAGEuCOMPILE@(internalName)=$$$NO
     }
     quit $$$OK
 ]]></Implementation>

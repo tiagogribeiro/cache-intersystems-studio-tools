@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.AutomatizeStorage">
+<TimeCreated>64735,61923.46363</TimeCreated>
+
+<Parameter name="STORAGEuENVIRONMENT">
+<Final>1</Final>
+<Default>^%Studio.Environment</Default>
+</Parameter>
+
+<Parameter name="STORAGEuCOMPILE">
+<Final>1</Final>
+<Default>^%Studio.Compile</Default>
+</Parameter>
+
+<Method name="install">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+..getStorageValue("Installer","automatize")=0){               
+        
+        do ..setStorageValue("UnitTest-LastTest","","")
+        do ..setStorageValue("UnitTest","namespace","TESTEUNITARIO")
+        do ..setStorageValue("UnitTest","package","test")
+        do ..setStorageValue("Integration","SlackEnable", $$$NO)
+        do ..setStorageValue("Integration","SlackUser", "")        
+        
+        ; the last step.
+        do ..setStorageValue("Installer","automatize",$$$YES)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getStorageValue">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,key:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[    quit $get(@..#STORAGEuENVIRONMENT@(process, key))
+]]></Implementation>
+</Method>
+
+<Method name="setStorageValue">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,key:%String="",value:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (key'=""){
+        set @..#STORAGEuENVIRONMENT@(process, key) = value
+    } else {
+        set @..#STORAGEuENVIRONMENT@(process) = value
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="deleteStorage">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,key:%String=""</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (key '=""){
+      kill @..#STORAGEuENVIRONMENT@(process,key)
+    } else {
+      kill @..#STORAGEuENVIRONMENT@(process)
+    }
+]]></Implementation>
+</Method>
+</Class>
+</Export>

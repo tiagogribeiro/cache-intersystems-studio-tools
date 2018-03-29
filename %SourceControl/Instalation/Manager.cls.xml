@@ -6,6 +6,8 @@
 
 <Method name="install">
 <ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[    do ##class(%SourceControl.Automation.AutomatizeStorage).install()
+]]></Implementation>
 </Method>
 </Class>
 </Export>
