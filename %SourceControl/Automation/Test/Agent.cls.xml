@@ -37,7 +37,7 @@
     do ..changeNamespaceForTest()
     
     if (..isTestClass(file)) {
-        set return = ..runTestByClass(file, method)
+        set return = ..runTestByClass(file, method, currentNamespace)
     } else {
         set return = ..runTestByPack(file)
     }
@@ -94,12 +94,30 @@
 ]]></Implementation>
 </Method>
 
+<Method name="isNamespaceIsNamespaceRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>currentNamespace</FormalSpec>
+<Implementation><![CDATA[
+    #dim test,current As %String
+    
+    set test = $ZConvert(##class(%SourceControl.Automation.AutomatizeUtil).getNamespaceRoutines($namespace),"U")
+    set current = $zConvert(currentNamespace,"U")
+    quit (test = current)
+]]></Implementation>
+</Method>
+
 <Method name="runTestByClass">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>testCase,method=""</FormalSpec>
+<FormalSpec>testCase,method="",currentNamespace</FormalSpec>
 <Private>1</Private>
 <ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[    quit ##class(test.Manager).DebugRunTestCase("", testCase,"",method)
+<Implementation><![CDATA[
+    if (..isNamespaceIsNamespaceRoutines(currentNamespace)){
+        quit ##class(test.Manager).DebugRunTestCase("", testCase,"",method)
+    } else {
+        write !,$$$FormatText($$$Text( "@ValidaAmbienteTesteRotinas@A configuração de 'rotinas' do namespace %1, deve ser configurada para utilizar as 'rotinas' do namespace %2, para que os testes possam rodar.", "%Studio.Tools"), $namespace, currentNamespace)
+        quit $$$OK
+    }
 ]]></Implementation>
 </Method>
 

@@ -219,9 +219,9 @@
 <Private>1</Private>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    if (..packageTest '= ""){
+    if ((..packageTest '= "") && (..#PACKAGEuTEST '=..packageTest)){                
         set ..classNameTest = $$$FormatText("%1.%2.%3",..#PACKAGEuTEST,..packageTest,..className)
-    } else {
+    } else {        
         set ..classNameTest = $$$FormatText("%1.%2",..#PACKAGEuTEST,..className)
     }
     quit $$$OK

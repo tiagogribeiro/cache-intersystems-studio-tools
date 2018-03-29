@@ -61,5 +61,19 @@
     quit description
 ]]></Implementation>
 </Method>
+
+<Method name="getNamespaceRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>namespace:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim current As %String = $namespace
+    #dim propertys As %String 
+    zn "%SYS"
+    do ##class(Config.Namespaces).Get(namespace,.propertys)
+    zn current
+    quit propertys("Routines")
+]]></Implementation>
+</Method>
 </Class>
 </Export>
