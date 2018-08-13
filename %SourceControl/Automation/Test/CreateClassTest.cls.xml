@@ -13,9 +13,10 @@
 <FormalSpec>nameClass:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-    set classe = ##class(%Dictionary.ClassDefinition).%New(nameClass)
-    set classe.Super = ..#SUPERuTEST
-    $$$ThrowOnError(classe.%Save())
+    set class = ##class(%Dictionary.ClassDefinition).%New(nameClass)
+    set class.Super = ..#SUPERuTEST
+    set class.ProcedureBlock = $$$YES
+    $$$ThrowOnError(class.%Save())
     return $$$OK
 ]]></Implementation>
 </Method>
