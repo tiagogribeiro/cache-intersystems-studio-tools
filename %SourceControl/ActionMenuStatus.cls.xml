@@ -84,7 +84,11 @@
 <Private>1</Private>
 <Implementation><![CDATA[
     if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
-        set enable = '##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
+        if (..internalName'=""){
+            set enable = '##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
+        } else {
+            set enable = $$$NO
+        }
     }
 ]]></Implementation>
 </Method>
