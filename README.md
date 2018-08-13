@@ -1,6 +1,10 @@
 # Added Tools of Studio Caché - Intersystems
 Adding tools in studio Caché Intersystems
 
+**New Feature**
+- Create a class test from the options menu.
+- Open test class by the class of the
+
 Fork of https://github.com/intersystems-ru/cache-tort-git and adding tools for automatize proccess of developing
 
 - Import and compile all sources imported
