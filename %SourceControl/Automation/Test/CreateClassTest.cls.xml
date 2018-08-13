@@ -14,7 +14,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     set classe = ##class(%Dictionary.ClassDefinition).%New(nameClass)
-    set classe.Super = "test.TestCase"
+    set classe.Super = ..#SUPERuTEST
     $$$ThrowOnError(classe.%Save())
     return $$$OK
 ]]></Implementation>

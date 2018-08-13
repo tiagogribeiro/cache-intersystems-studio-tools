@@ -68,6 +68,7 @@
 <Private>1</Private>
 <Implementation><![CDATA[
      if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
+        
         #dim tester As AutomatizeTest
         set tester = ##class(AutomatizeTest).createFrom(..internalName)
         do tester.createNewClass()               
