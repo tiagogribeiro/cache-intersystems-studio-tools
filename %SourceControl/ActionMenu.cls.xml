@@ -63,6 +63,33 @@
 ]]></Implementation>
 </Method>
 
+<Method name="testCreateClassTest">
+<FormalSpec><![CDATA[&Target,&Action]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+     if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
+        #dim tester As AutomatizeTest
+        set tester = ##class(AutomatizeTest).createFrom(..internalName)
+        do tester.createNewClass()               
+        set Action = 5
+        set Target = tester.getClassTest()_".cls"   
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testOpenClassTest">
+<FormalSpec><![CDATA[&Target,&Action]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestOpenClassTest"){
+        #dim tester As AutomatizeTest
+        set tester = ##class(AutomatizeTest).createFrom(..internalName)
+        set Action = 5
+        set Target = tester.getClassTest()_".cls"
+    }
+]]></Implementation>
+</Method>
+
 <Method name="cleanResultsOfTest">
 <Private>1</Private>
 <Implementation><![CDATA[
@@ -101,19 +128,21 @@
 
 <Method name="execute">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>name:%String,InternalName:%String,SelectedText</FormalSpec>
+<FormalSpec><![CDATA[name:%String,InternalName:%String,SelectedText,&Target,&Action]]></FormalSpec>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
     set action = ..%New( name, InternalName, SelectedText )
     do action.testAndCompile()
-    do action.testClass()    
+    do action.testClass()
     do action.testAllSuite()
     do action.testInPackage()
+    do action.testCreateClassTest(.Target, .Action)
+    do action.testOpenClassTest(.Target, .Action)
     do action.testLastTest()
     do action.cleanResultsOfTest()
     do action.cleanPluginPopulate()
     do action.activeAutomaticTest()
-    do action.inactiveAutomaticTest()
+    do action.inactiveAutomaticTest()  
     
     quit $$$NO
 ]]></Implementation>

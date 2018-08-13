@@ -38,6 +38,9 @@
 <MenuItem Name="%OpenRepoFolder" Save = "001" />
 </Menu>
 <Menu Name="%TestUnitario" Type="0">
+<MenuItem Name="%TestCreateClass" />
+<MenuItem Name="%TestOpenClassTest" />
+<MenuItem Separator="true"/>
 <MenuItem Name="%TestAllClass" />
 <MenuItem Name="%TestClass" />
 <MenuItem Name="%TestLastTest" />
@@ -69,7 +72,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     ; Tiago G. Ribeiro
-    if ('##class(ActionMenu).execute(Name, InternalName, SelectedText)){
+    if ('##class(ActionMenu).execute(Name, InternalName, SelectedText, .Target, .Action)){
         #dim ec As %Status = $$$OK
         #dim menu As %Status = $Piece(Name, ",", 1)
         if menu '= "%SourceMenu", menu'="%SourceMenuContext" {

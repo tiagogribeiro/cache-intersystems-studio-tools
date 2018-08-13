@@ -54,7 +54,11 @@
 <Private>1</Private>
 <Implementation><![CDATA[
     #dim namespaceAllow As %String
-    set namespaceAllow = ..getStorageValue("UnitTest","namespace")
+     
+     set namespaceAllow = ..getStorageValue("UnitTest","namespace",$namespace)
+     if (namespaceAllow=""){
+        set namespaceAllow = ..getStorageValue("UnitTest","namespace")
+     }
     
     write !,$$$FormatText($$$Text( "@NamespaceAtual@Namespace atual: %1", "%Studio.Tools"), $namespace )
     
@@ -113,7 +117,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     if (..isNamespaceIsNamespaceRoutines(currentNamespace)){
-        quit ##class(test.Manager).DebugRunTestCase("", testCase,"",method)
+        quit ##class(Manager).DebugRunTestCase("", testCase,"",method)
     } else {
         write !,$$$FormatText($$$Text( "@ValidaAmbienteTesteRotinas@A configuração de 'rotinas' do namespace %1, deve ser configurada para utilizar as 'rotinas' do namespace %2, para que os testes possam rodar.", "%Studio.Tools"), $namespace, currentNamespace)
         quit $$$OK
@@ -130,7 +134,7 @@
    #dim fileName As %String = $get(^UnitTestRoot)_"\PackageTests.xml"
    
    do $SYSTEM.OBJ.ExportPackage( package, fileName )
-   quit ##class(test.Manager).RunTest(,"/nodelete")
+   quit ##class(Manager).RunTest(,"/nodelete")
 ]]></Implementation>
 </Method>
 
@@ -139,7 +143,7 @@
 <Implementation><![CDATA[
     #dim namespace As %String = $namespace
     do ..changeNamespaceForTest()
-    do ##class(test.Manager).PurgeResult()
+    do ##class(Manager).PurgeResult()
     do ..backToTheCurrentNamespace(namespace)
 ]]></Implementation>
 </Method>

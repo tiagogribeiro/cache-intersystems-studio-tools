@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Test.Manager">
+<Super>%UnitTest.Manager</Super>
+<TimeCreated>63973,40417.786247</TimeCreated>
+
+<Method name="Cleanup">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..cleanDataOfPopulate()
+    #; Remove any public variables and close any open objects
+    Kill
+    Set sc=$$$OK
+    If $tlevel {
+        Set rc=$$$ERROR($$$GeneralError,"Transaction left open after test: "_$tlevel)
+        Set sc=$$$ADDSC(sc,rc)
+        While $tlevel { Tcommit }
+    }
+    If $zu(139) {
+        Set rc=$$$ERROR($$$GeneralError,"A test left a transactions suspended")
+        Set sc=$$$ADDSC(sc,rc)
+        Do $zu(139,0)
+    }
+    #; Check for any locks left by the test in this process
+    Set rset=##class(%ResultSet).%New("%SYS.LockQuery:List"),locks=""
+    Do rset.Execute("P"_$job)
+    While rset.Next() {
+        Set locks=locks_rset.Data("LockString")_","
+        If $length(locks)>512 Set locks=locks_"...," Quit
+    }
+    If locks'="" {
+        Set rc=$$$ERROR($$$GeneralError,"Locks left after unit test run: "_$extract(locks,1,*-1))
+        Set sc=$$$ADDSC(sc,rc)
+        Lock
+    }
+    Set $ECode="",$ZError="" Do $$$ZuSetState(40,$$$ZuGetDefault(40)),$$$ZuSetPzuints(5,0),$$$ZuFixDate
+    #; Cleanup any $sortbegin there are active
+    Set tmp=$sortend(,0)
+    If tmp {
+        Set rc=$$$ERROR($$$GeneralError,"Test left $sortbegin open without closing it")
+        Set sc=$$$ADDSC(sc,rc)
+    }
+    Quit sc
+]]></Implementation>
+</Method>
+
+<Method name="cleanDataOfPopulate">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (##class(%SourceControl.Automation.AutomatizeUtil).isClassCompiled("test.util.Populate")){
+        do ##class(test.util.Populate).destroy()
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

@@ -302,6 +302,16 @@
 ]]></Implementation>
 </Method>
 
+<Method name="createNewClass">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+     if (##class(%SourceControl.Automation.Test.CreateClassTest).createClass(..classNameTest)){
+        write !,$$$Text("@Test.NovaClasseTest@[TesteUnitário] - Classe de teste criada. - ","%Studio.Tools")
+        write ..classNameTest
+     }
+]]></Implementation>
+</Method>
+
 <Method name="getClassTest">
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[    quit ..classNameTest

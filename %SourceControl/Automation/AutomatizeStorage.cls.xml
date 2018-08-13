@@ -34,9 +34,14 @@
 
 <Method name="getStorageValue">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>process:%String,key:%String</FormalSpec>
+<FormalSpec>process:%String,keyOne:%String,keyTwo=""</FormalSpec>
 <Private>1</Private>
-<Implementation><![CDATA[    quit $get(@..#STORAGEuENVIRONMENT@(process, key))
+<Implementation><![CDATA[
+    if (keyTwo '=""){
+        quit $get(@..#STORAGEuENVIRONMENT@(process, keyOne, keyTwo))
+    } else {
+        quit $get(@..#STORAGEuENVIRONMENT@(process, keyOne))
+    }
 ]]></Implementation>
 </Method>
 

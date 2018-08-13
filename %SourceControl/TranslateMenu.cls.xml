@@ -30,6 +30,8 @@
                 "%TestClearPopulate" : $$$Text("@Menu.LimparDadosPopulate@Limpar os dados do Populate","%Studio.Tools"),
                 "%TestAutomaticOff" : $$$Text("@Menu.DesabilitarAutoTeste@Desabilitar - Compilar e testar","%Studio.Tools"),
                 "%TestAutomaticOn" : $$$Text("@Menu.HabilitarAutoTeste@Habilitar - Compilar e testar","%Studio.Tools"),
+                "%TestCreateClass" : $$$Text("@Menu.CriarClasseTeste@Criar a classe de teste","%Studio.Tools"),
+                "%TestOpenClassTest" : $$$Text("@Menu.AbrirClasseTeste@Abrir classe de teste","%Studio.Tools"),
                 :DisplayName)
     
     quit $$$OK

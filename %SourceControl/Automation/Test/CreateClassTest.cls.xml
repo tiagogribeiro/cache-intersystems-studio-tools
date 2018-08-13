@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.Automation.Test.CreateClassTest">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64873,54271.607802</TimeCreated>
+
+<Parameter name="SUPERuTEST">
+<Default>test.TestCase</Default>
+</Parameter>
+
+<Method name="createClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>nameClass:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set classe = ##class(%Dictionary.ClassDefinition).%New(nameClass)
+    set classe.Super = "test.TestCase"
+    $$$ThrowOnError(classe.%Save())
+    return $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

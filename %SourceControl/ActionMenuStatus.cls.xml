@@ -79,6 +79,16 @@
 ]]></Implementation>
 </Method>
 
+<Method name="activeCreateClassTest">
+<FormalSpec><![CDATA[internalName:%String,&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
+        set enable = '##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
+    }
+]]></Implementation>
+</Method>
+
 <Method name="inactiveAutomaticTest">
 <FormalSpec><![CDATA[&enable]]></FormalSpec>
 <Private>1</Private>
@@ -89,6 +99,16 @@
         } else {
             set enable = $$$YES
         }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveOpenClassTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestOpenClassTest"){        
+        set enable = ##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
     }
 ]]></Implementation>
 </Method>
@@ -104,6 +124,8 @@
     do action.testLastTest( .DisplayName, .Enable )
     do action.activeAutomaticTest( .Enable )
     do action.inactiveAutomaticTest( .Enable )
+    do action.activeCreateClassTest(InternalName, .Enable)
+    do action.inactiveOpenClassTest(.Enable)
     
     quit $$$OK
 ]]></Implementation>
