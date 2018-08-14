@@ -83,8 +83,10 @@
 <FormalSpec><![CDATA[internalName:%String,&enable]]></FormalSpec>
 <Private>1</Private>
 <Implementation><![CDATA[
+    #dim class As %String
     if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
-        if (..internalName'=""){
+        set class = ##class(AutomatizeUtil).getNameFileNotExtension(internalName)
+        if ((..internalName'="") && '##class(AutomatizeUtil).isClassAbstract(class)){
             set enable = '##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
         } else {
             set enable = $$$NO

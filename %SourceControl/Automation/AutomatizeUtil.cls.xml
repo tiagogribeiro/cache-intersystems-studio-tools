@@ -50,6 +50,14 @@
 ]]></Implementation>
 </Method>
 
+<Method name="isClassAbstract">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(%ClassDefinition).%OpenId(className).Abstract
+]]></Implementation>
+</Method>
+
 <Method name="limitDescription">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>description:%String</FormalSpec>
