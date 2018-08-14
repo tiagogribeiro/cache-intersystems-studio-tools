@@ -152,7 +152,7 @@
     set:(direction=..#DIRECTIONuFINDuLEFT) packageFinded = ..findPackageRightToLeft(.map)
     
     if (packageFinded'=""){        
-        set ..packageTest = $replace(..package,..packageReplace,packageFinded)
+        set ..packageTest = $replace(..package,..packageReplace,packageFinded,,1)
     } else {
         set ..packageTest = $replace(..package,"test.","")
     }
@@ -172,7 +172,7 @@
         quit:(position>size)        
         set findPack = $piece(..package,".",1,position)        
         quit:(findPack="")
-        
+                
         set packageFinded = $get(map(findPack))
         quit:(packageFinded'="")
     }
