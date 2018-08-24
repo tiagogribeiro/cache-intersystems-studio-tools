@@ -33,6 +33,7 @@ init
     read option
     
     goto:(option="") init
+    goto:(option=0) exit
     
     do $case(option,                
                 1: ..configureAllDefault(),
@@ -43,11 +44,11 @@ init
                 6: ..enableAndDisabledSlackIntegration())
         
     hang:(option>0) 2
-    goto:(option=0) exit
+        
     goto init
     
 exit
-    write !,?20,"bye."
+    write !,?10,"bye."
     quit
 ]]></Implementation>
 </Method>
