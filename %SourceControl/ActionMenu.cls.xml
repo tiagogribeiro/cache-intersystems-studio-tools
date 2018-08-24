@@ -145,6 +145,8 @@
     do action.activeAutomaticTest()
     do action.inactiveAutomaticTest()  
     
+    do ##class(%SourceControl.Instalation.Manager).displayMessageConfigure()
+    
     quit $$$NO
 ]]></Implementation>
 </Method>

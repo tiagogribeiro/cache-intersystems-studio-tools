@@ -13,17 +13,19 @@
 <Default>^%Studio.Compile</Default>
 </Parameter>
 
-<Method name="install">
+<Method name="installDefault">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     if (+..getStorageValue("Installer","automatize")=0){               
         
         do ..setStorageValue("UnitTest-LastTest","","")
+        do ..setStorageValue("UnitTest","SuperClass", "%UnitTest.TestCase")
         do ..setStorageValue("UnitTest","namespace","TESTEUNITARIO")
         do ..setStorageValue("UnitTest","package","test")
         do ..setStorageValue("Integration","SlackEnable", $$$NO)
         do ..setStorageValue("Integration","SlackUser", "")        
+        do ..setStorageValue("UnitTest","SuperClass", "")
         
         ; the last step.
         do ..setStorageValue("Installer","automatize",$$$YES)
@@ -35,7 +37,6 @@
 <Method name="getStorageValue">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>process:%String,keyOne:%String,keyTwo=""</FormalSpec>
-<Private>1</Private>
 <Implementation><![CDATA[
     if (keyTwo '=""){
         quit $get(@..#STORAGEuENVIRONMENT@(process, keyOne, keyTwo))
@@ -48,7 +49,6 @@
 <Method name="setStorageValue">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>process:%String,key:%String="",value:%String</FormalSpec>
-<Private>1</Private>
 <Implementation><![CDATA[
     if (key'=""){
         set @..#STORAGEuENVIRONMENT@(process, key) = value
@@ -62,7 +62,6 @@
 <Method name="deleteStorage">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>process:%String,key:%String=""</FormalSpec>
-<Private>1</Private>
 <Implementation><![CDATA[
     if (key '=""){
       kill @..#STORAGEuENVIRONMENT@(process,key)

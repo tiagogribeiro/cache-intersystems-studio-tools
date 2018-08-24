@@ -1,12 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="%SourceControl.Instalation.Manager">
+<Import>%SourceControl.Automation</Import>
 <Super>%RegisteredObject</Super>
 <TimeCreated>64666,36238.556428</TimeCreated>
 
 <Method name="install">
 <ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[    do ##class(%SourceControl.Automation.AutomatizeStorage).install()
+<Implementation><![CDATA[    do ##class(AutomatizeStorage).installDefault()
+]]></Implementation>
+</Method>
+
+<Method name="menu">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim option
+init
+    write #
+    write !,?10,"Wellcome in configurations of Studio Tools - v1.0"    
+    write !,?10,"Author: Tiago G Ribeiro (tiago_goulart@yahoo.com)"
+    write !,?10,"GitHub: https://github.com/tiagogribeiro/cache-intersystems-studio-tools"
+    write !,?10,"--------------------------------------------------------"
+    write !,?10,"[0] - Exit."
+    write !,?10,"[1] - Configure all default."
+    write !,?10,"[2] - Configure package test."
+    write !,?10,"[3] - Configure 'super' for Unit Test."
+    write !,?10,"[4] - Configure namespace to Unit Test."
+    write !,?10,"[5] - Configure user for slack integration."
+    write !,?10,"[6] - Enable/Disabled integration in Slack."        
+    write !,?10,"--------------------------------------------------------"    
+    write !,?10,"Input option:"
+    read option
+    
+    goto:(option="") init
+    
+    do $case(option,                
+                1: ..configureAllDefault(),
+                2: ..configurePackageTest(),
+                3: ..configureSuperClassTest(),
+                4: ..configureNamespaceToUnitTest(),
+                5: ..configureUserForSlackIntegration(),
+                6: ..enableAndDisabledSlackIntegration())
+        
+    hang:(option>0) 2
+    goto:(option=0) exit
+    goto init
+    
+exit
+    write !,?20,"bye."
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="displayMessageConfigure">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+##class(AutomatizeStorage).getStorageValue("Installer","automatize")=0){
+        write !,"Configure the 'Studio Tools' of terminal, execute: do ##class(%SourceControl.Instalation.Manager).menu() in your namespace."
+    }
+    return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="configureAllDefault">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is option reconfigure all definitions."
+    write !,?10,"You want to reconfigure (y/n):"
+    read option
+    
+    if ($zConvert(option,"U")="Y"){
+        do ##class(AutomatizeStorage).setStorageValue("Installer","automatize",$$$NO)
+        do ##class(AutomatizeStorage).installDefault()
+        write !,?10,"Success reconfigure all definitions."
+    } else {
+        write !,?10,"nothing done."
+    }
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configurePackageTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim package As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","package")
+    write !,?10,"New configuration:"
+    read package
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","package",package)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureSuperClassTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","SuperClass")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","SuperClass",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureNamespaceToUnitTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","namespace")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","namespace",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureUserForSlackIntegration">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("Integration","SlackUser")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("Integration","SlackUser",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="enableAndDisabledSlackIntegration">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    #dim enableAndDisabled As %Boolean = ##class(AutomatizeStorage).getStorageValue("Integration","SlackEnable")
+    write !,?10,"It is configurated in:"_$select(enableAndDisabled=1:"enable",1:"disabled")
+    write !,?10,"New configuration (1/0):"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("Integration","SlackEnable",option)
+    write !,?10,"Success in configuration."    
+    quit
 ]]></Implementation>
 </Method>
 </Class>
