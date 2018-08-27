@@ -38,6 +38,7 @@ In the namespace enable in source control of the class: "%SourceControl.Git", af
 # Testing in: 
 - 2013.1.1
 - 2016.1.3.306.0.
+- 2017.1.0 Build 720
 
 # Installing
 - Enable written in database "CacheLIB" by Portal Caché DataBases
