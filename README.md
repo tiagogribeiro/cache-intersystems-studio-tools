@@ -32,6 +32,9 @@ It's not necessary configuration if not is shared environment
 Import class and compile the class imported, after configure your version control with class(%SourceControl.Git).
 Reload your studio, then it will installed language according your language defined in Caché DataBase.
 
+In the namespace enable in source control of the class: "%SourceControl.Git", after all options exist in studio.
+(Is necessary reboot in studio)
+
 # Testing in: 
 - 2013.1.1
 - 2016.1.3.306.0.
