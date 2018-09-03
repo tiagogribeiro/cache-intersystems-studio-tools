@@ -2,7 +2,8 @@
 Adding tools in studio Caché Intersystems
 
 **New Feature v1.2**
-- To configure the plugin use the terminal command: YOURNAMESPACE> do ##class(%SourceControl.Instalation.Manager).menu()
+- To configure the plugin use the terminal command: </br>
+YOURNAMESPACE> do ##class(%SourceControl.Instalation.Manager).menu()
 
 **New Feature v1.1**
 - Create a class test from the options menu.
