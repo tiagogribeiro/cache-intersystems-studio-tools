@@ -3,6 +3,7 @@ Adding tools in studio Caché Intersystems
 
 **New Feature v1.2**
 To configure the plugin use the terminal command:
+
 do ##class(%SourceControl.Instalation.Manager).menu()
 
 **New Feature v1.1**
