@@ -48,7 +48,6 @@
 <MenuItem Name="%TestClearResult" />
 <MenuItem Name="%TestClearPopulate" />
 <MenuItem Separator="true"/>
-<MenuItem Separator="true"/>
 <MenuItem Name="%TestAutomaticOn" />
 <MenuItem Name="%TestAutomaticOff" />
 </Menu>
@@ -62,6 +61,9 @@
 <MenuItem Name="%TestClass" />
 <MenuItem Name="%TestAndCompile" />
 <MenuItem Name="%TestPackage" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestCreateClass" />
+<MenuItem Name="%TestOpenClassTest" />
 </Menu>
 </MenuBase>
 ]]></Data>
