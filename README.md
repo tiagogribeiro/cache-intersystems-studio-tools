@@ -1,6 +1,10 @@
 # Added Tools of Studio Caché - Intersystems
 Adding tools in studio Caché Intersystems
 
+**New Feature v1.2**
+- To configure the plugin use the terminal command: </br>
+YOURNAMESPACE> do ##class(%SourceControl.Instalation.Manager).menu()
+
 **New Feature v1.1**
 - Create a class test from the options menu.
 - Open test class by the class of the
@@ -32,9 +36,13 @@ It's not necessary configuration if not is shared environment
 Import class and compile the class imported, after configure your version control with class(%SourceControl.Git).
 Reload your studio, then it will installed language according your language defined in Caché DataBase.
 
+In the namespace enable in source control of the class: "%SourceControl.Git", after all options exist in studio.
+(Is necessary reboot in studio)
+
 # Testing in: 
 - 2013.1.1
 - 2016.1.3.306.0.
+- 2017.1.0 Build 720
 
 # Installing
 - Enable written in database "CacheLIB" by Portal Caché DataBases
