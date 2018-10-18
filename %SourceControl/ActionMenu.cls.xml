@@ -132,21 +132,26 @@
 <FormalSpec><![CDATA[name:%String,InternalName:%String,SelectedText,&Target,&Action]]></FormalSpec>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
-    set action = ..%New( name, InternalName, SelectedText )
-    do action.testAndCompile()
-    do action.testClass()
-    do action.testAllSuite()
-    do action.testInPackage()
-    do action.testCreateClassTest(.Target, .Action)
-    do action.testOpenClassTest(.Target, .Action)
-    do action.testLastTest()
-    do action.cleanResultsOfTest()
-    do action.cleanPluginPopulate()
-    do action.activeAutomaticTest()
-    do action.inactiveAutomaticTest()  
-    
-    do ##class(%SourceControl.Instalation.Manager).displayMessageConfigure()
-    
+    #dim exception As %Exception.AbstractException
+    try {
+        
+        set action = ..%New( name, InternalName, SelectedText )
+        do action.testAndCompile()
+        do action.testClass()
+        do action.testAllSuite()
+        do action.testInPackage()
+        do action.testCreateClassTest(.Target, .Action)
+        do action.testOpenClassTest(.Target, .Action)
+        do action.testLastTest()
+        do action.cleanResultsOfTest()
+        do action.cleanPluginPopulate()
+        do action.activeAutomaticTest()
+        do action.inactiveAutomaticTest()  
+        
+        do ##class(%SourceControl.Instalation.Manager).displayMessageConfigure()
+    } catch exception {
+        write $$$FormatText("Plugin Tools ERROR: %1",exception.DisplayString())
+    }
     quit $$$NO
 ]]></Implementation>
 </Method>

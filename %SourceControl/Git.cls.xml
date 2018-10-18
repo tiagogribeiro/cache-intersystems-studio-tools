@@ -62,9 +62,9 @@
 <MenuItem Name="%TestAndCompile" />
 <MenuItem Name="%TestPackage" />
 <MenuItem Separator="true"/>
-<MenuItem Name="%TestCreateClass" />
 <MenuItem Name="%TestOpenClassTest" />
 </Menu>
+
 </MenuBase>
 ]]></Data>
 </XData>
@@ -74,17 +74,21 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
     ; Tiago G. Ribeiro
-    if ('##class(ActionMenu).execute(Name, InternalName, SelectedText, .Target, .Action)){
-        #dim ec As %Status = $$$OK
-        #dim menu As %Status = $Piece(Name, ",", 1)
-        if menu '= "%SourceMenu", menu'="%SourceMenuContext" {
-            quit $$$OK
+    try {
+        if ('##class(ActionMenu).execute(Name, InternalName, SelectedText, .Target, .Action)){
+            #dim ec As %Status = $$$OK
+            #dim menu As %Status = $Piece(Name, ",", 1)
+            if menu '= "%SourceMenu", menu'="%SourceMenuContext" {
+                return $$$OK
+            }
+            set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+            set ec = ##class(Utils).UserAction(InternalName, Name, .Target, .Action, .Reload)
+            return ec
+        } else {
+            return $$$OK
         }
-        set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
-        set ec = ##class(Utils).UserAction(InternalName, Name, .Target, .Action, .Reload)
-        quit ec
-    } else {
-        quit $$$OK
+    } catch e {
+        W e.DisplayString()
     }
 ]]></Implementation>
 </Method>
@@ -278,6 +282,58 @@ Called before Studio checks for the timestamp of an item.</Description>
     ;do ##class(Utils).ImportItem(InternalName)
     do ##class(%SourceControl.Instalation.Manager).install()
     Quit
+]]></Implementation>
+</Method>
+
+<Method name="ItemIconState">
+<Description><![CDATA[
+Used to allow Studio to display different icons in open dialog or project window etc.
+Return values are:<ul>
+<li>0 - Not in source control</li>
+<li>1 - In source control, not checked out</li>
+<li>2 - In source control and checked out so item is editable</li></ul>]]></Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set automation = ##class(%SourceControl.Automation.AutomatizeTest).%New(InternalName)
+    if (automation.isRunTest() && 'automation.isClassTest()){
+        return 2
+    }
+    Quit 0
+]]></Implementation>
+</Method>
+
+<Property name="IconStatus">
+<Description><![CDATA[
+Can be set to determine if we wish to report the source control status of the document in the project window
+or in the open dialog. This property should be set when the source control class is initialized.
+As this can be a large number of callbacks the default is not to call the
+<method>ItemIconState</method> method at all. Do not enable this unless the information needed is available
+directly in Cache or the performance will be too slow. Values are:<ul>
+<li>0 - Disabled</li>
+<li>1 - Use <method>ItemIconState</method> callback in project window</li>
+<li>2 - Use <method>ItemIconState</method> callback in open dialog window (and namespace window)</li>
+<li>3 - Use <method>ItemIconState</method> callback everywhere</li></ul>]]></Description>
+<Type>%Integer</Type>
+<InitialExpression>1</InitialExpression>
+</Property>
+
+<Method name="GetStatus">
+<Description>
+Return information about this entity.</Description>
+<FormalSpec><![CDATA[InternalName:%String,&IsInSourceControl:%Boolean,&Editable:%Boolean,&IsCheckedOut:%Boolean,&UserCheckedOut:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    #dim isTest As %Boolean
+    set automation = ##class(%SourceControl.Automation.AutomatizeTest).%New(InternalName)
+    set isTest = (automation.isRunTest() && 'automation.isClassTest())
+    
+    set Editable=1
+    set IsCheckedOut=isTest
+    set UserCheckedOut=""
+    set IsInSourceControl=isTest
+    Quit $$$OK
 ]]></Implementation>
 </Method>
 </Class>
