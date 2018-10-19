@@ -2,8 +2,8 @@
 Adding tools in studio Caché Intersystems
 
 **New Feature v1.3**
-Added signaling of class that exists test in project tree.
-Does not signaling in namespace tree.
+- Added signaling of class that exists test in project tree.
+- Does not signaling in namespace tree.
 
 **New Feature v1.2**
 - To configure the plugin use the terminal command: </br>
