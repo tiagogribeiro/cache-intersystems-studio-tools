@@ -1,6 +1,10 @@
 # Added Tools of Studio Caché - Intersystems
 Adding tools in studio Caché Intersystems
 
+**New Feature v1.3**
+Added signaling of class that exists test in project tree.
+Does not signaling in namespace tree.
+
 **New Feature v1.2**
 - To configure the plugin use the terminal command: </br>
 YOURNAMESPACE> do ##class(%SourceControl.Instalation.Manager).menu()
@@ -38,6 +42,8 @@ Reload your studio, then it will installed language according your language defi
 
 In the namespace enable in source control of the class: "%SourceControl.Git", after all options exist in studio.
 (Is necessary reboot in studio)
+
+The tests must be inside the "test" package for automation testing.
 
 # Testing in: 
 - 2013.1.1
