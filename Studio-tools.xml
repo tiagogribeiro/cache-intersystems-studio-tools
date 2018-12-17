@@ -1,0 +1,3718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="%SourceControl.ActionMenu">
+<Import>%SourceControl.Automation</Import>
+<Super>Menu</Super>
+<TimeCreated>64281,37672.152777</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+// @Todo Aplicar pattern Chain Of Responsibility - Sugestão.
+
+]]></Content>
+</UDLText>
+
+<Method name="testAndCompile">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAndCompile"){
+       if ( $system.OBJ.Compile(##class(AutomatizeUtil).getNameFileNotExtension( ..internalName )) ){            
+            do:(..selectedText'="") ##class(AutomatizeTest).%New(..internalName).run(..selectedText)
+            do:(..selectedText="") ##class(AutomatizeTest).%New(..internalName).run()
+       }
+        quit $$$YES
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testClass">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClass"){
+        do:(..selectedText'="") ##class(AutomatizeTest).createFrom(..internalName).run(..selectedText)
+        do:(..selectedText="") ##class(AutomatizeTest).createFrom(..internalName).run()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testAllSuite">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAllClass"){
+        do ##class(AutomatizeTest).createFrom(..internalName).runAllSuite()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testInPackage">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if ( ##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestPackage" ){
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(..internalName)
+        do ##class(AutomatizeTest).createFrom(..internalName).runPackage( package )
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testLastTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestLastTest"){
+        do ##class(AutomatizeTest).createFrom(..internalName).runLastTest()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testCreateClassTest">
+<FormalSpec><![CDATA[&Target,&Action]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+     if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
+        
+        #dim tester As AutomatizeTest
+        set tester = ##class(AutomatizeTest).createFrom(..internalName)
+        do tester.createNewClass()               
+        set Action = 5
+        set Target = tester.getClassTest()_".cls"   
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testOpenClassTest">
+<FormalSpec><![CDATA[&Target,&Action]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestOpenClassTest"){
+        #dim tester As AutomatizeTest
+        set tester = ##class(AutomatizeTest).createFrom(..internalName)
+        set Action = 5
+        set Target = tester.getClassTest()_".cls"
+    }
+]]></Implementation>
+</Method>
+
+<Method name="cleanResultsOfTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClearResult"){
+        do ##class(AutomatizeTest).create().clearResult()     
+    }
+]]></Implementation>
+</Method>
+
+<Method name="cleanPluginPopulate">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClearPopulate"){
+        do ##class(AutomatizeTest).create().clearPopulate()     
+    }
+]]></Implementation>
+</Method>
+
+<Method name="activeAutomaticTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOn"){        
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$YES)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveAutomaticTest">
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOff"){
+        do ##class(OptionState).registerOption("%TestAutomatic", $$$NO)        
+    }
+]]></Implementation>
+</Method>
+
+<Method name="execute">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,InternalName:%String,SelectedText,&Target,&Action]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim exception As %Exception.AbstractException
+    try {
+        
+        set action = ..%New( name, InternalName, SelectedText )
+        do action.testAndCompile()
+        do action.testClass()
+        do action.testAllSuite()
+        do action.testInPackage()
+        do action.testCreateClassTest(.Target, .Action)
+        do action.testOpenClassTest(.Target, .Action)
+        do action.testLastTest()
+        do action.cleanResultsOfTest()
+        do action.cleanPluginPopulate()
+        do action.activeAutomaticTest()
+        do action.inactiveAutomaticTest()  
+        
+        do ##class(%SourceControl.Instalation.Manager).displayMessageConfigure()
+    } catch exception {
+        write $$$FormatText("Plugin Tools ERROR: %1",exception.DisplayString())
+    }
+    quit $$$NO
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.ActionMenuStatus">
+<Import>%SourceControl.Automation</Import>
+<Super>Menu</Super>
+<TimeCreated>64506,31209.7456</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+// @Todo Aplicar pattern Chain Of Responsibility - Suegestão.
+
+]]></Content>
+</UDLText>
+
+<Property name="automatizeTest">
+<Type>AutomatizeTest</Type>
+<Private>1</Private>
+</Property>
+
+<Method name="testAnCompile">
+<FormalSpec><![CDATA[&displayName:%String,&selectedText:%String,&enable:%Boolean]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    
+    if ((##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAndCompile")||(##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestClass")){
+        
+        set enable = ..automatizeTest.isRunTest()
+        set displayName = displayName_$select(..automatizeTest.getClassTest()'="":" '"_..automatizeTest.getClassTest()_"'",1:"")               
+        set displayName = displayName_$select(selectedText'="":"»'"_##class(AutomatizeUtil).limitDescription(selectedText)_"'",1:"")
+        
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testInPackage">
+<FormalSpec><![CDATA[&displayName:%String,&enable:%Boolean]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if ( ##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestPackage" ){
+        #dim extension As %String = ##class(AutomatizeUtil).getExtension(..internalName)
+        #dim package As %String = ##class(AutomatizeUtil).getNameFileNotExtension(..internalName)
+        if (extension = "pkg"){
+            set enable = $$$YES
+            set displayName = displayName_$select(package'="":" '"_package_"'",1:"")
+        } else {
+            set enable = $$$NO
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="testLastTest">
+<FormalSpec><![CDATA[&displayName:%String,&enable:%Boolean]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestLastTest"){
+        #dim lastTest As %String = ..automatizeTest.getLastTest()
+        if ( lastTest'="" ){
+            set enable = $$$YES
+            set displayName = displayName_$select(lastTest'="":" '"_lastTest_"'",1:"")
+        } else {
+            set enable = $$$NO
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="activeAutomaticTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOn"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$YES){
+            set enable = $$$NO
+        } else {
+            set enable = $$$YES
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="activeCreateClassTest">
+<FormalSpec><![CDATA[internalName:%String,&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim class As %String
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestCreateClass"){
+        set class = ##class(AutomatizeUtil).getNameFileNotExtension(internalName)
+        if ((..internalName'="") && '##class(AutomatizeUtil).isClassAbstract(class)){
+            set enable = '##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
+        } else {
+            set enable = $$$NO
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveAutomaticTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestAutomaticOff"){
+        if (+##class(OptionState).getOption("%TestAutomatic")=$$$NO){
+            set enable = $$$NO
+        } else {
+            set enable = $$$YES
+        }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="inactiveOpenClassTest">
+<FormalSpec><![CDATA[&enable]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(ActionMenuUtil).getLastNameMenu(..name) = "%TestOpenClassTest"){        
+        set enable = ##class(AutomatizeUtil).isClassCompiled(..automatizeTest.getClassTest())
+    }
+]]></Implementation>
+</Method>
+
+<Method name="active">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,InternalName:%String,&Enable:%Boolean,&DisplayName:%String,SelectedText:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set action = ..%New(name, InternalName)
+    do action.testAnCompile( .DisplayName, .SelectedText, .Enable )
+    do action.testInPackage( .DisplayName, .Enable )
+    do action.testLastTest( .DisplayName, .Enable )
+    do action.activeAutomaticTest( .Enable )
+    do action.inactiveAutomaticTest( .Enable )
+    do action.activeCreateClassTest(InternalName, .Enable)
+    do action.inactiveOpenClassTest(.Enable)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="%OnNew">
+<FormalSpec>name:%String,internalName:%String,selectedText:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ##super(name, internalName, selectedText)
+    set ..automatizeTest = ##class(AutomatizeTest).%New(internalName)
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.ActionMenuUtil">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64506,31537.69372</TimeCreated>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="getLastNameMenu">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit $piece(name,",",$length(name,","))
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.AutomatizeCompilation">
+<Final>1</Final>
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
+<TimeCreated>64265,32941.909521</TimeCreated>
+
+<Parameter name="COMPILEuCLASS">
+<Final>1</Final>
+<Expression>$listBuild("mac","int","cls")</Expression>
+</Parameter>
+
+<Parameter name="COMPILE">
+<Final>1</Final>
+<Expression>$listBuild("mac","int","cls","csp","csr")</Expression>
+</Parameter>
+
+<Method name="isCompiledRule">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim RULE = "csr"
+    #dim file = ""
+    for {
+        set file = $order(@..#STORAGEuCOMPILE@(file),1)
+        quit:(file="")
+        if (##class(AutomatizeUtil).getExtension(file) = RULE){
+            return $$$YES
+        }
+    }
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Method name="compileClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ($listFind(..#COMPILEuCLASS,##class(AutomatizeUtil).getExtension(file))>0){
+        #dim status As %Status
+        set status = $SYSTEM.OBJ.Compile(##class(AutomatizeUtil).getNameFileNotExtension(file))
+        do ..registerCompile(file, status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileRule">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (##class(AutomatizeUtil).getExtension(file) = "csr"){   
+        #dim status As %Status = $SYSTEM.CSP.LoadRuleFile(file)
+        do ..registerCompile(file,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileCSP">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (##class(AutomatizeUtil).getExtension(file)="csp") && '..isCompiledRule(){
+        #dim status As %Status = $SYSTEM.CSP.LoadPage(file) 
+        do ..registerCompile(file,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="compileCSPDir">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim dir As %String = ..getDir()    
+    if (dir'="")&&(..isCompiledRule()){
+        
+        #dim status = "Compile all in process..."
+        do ..registerCompile(dir,status)
+        
+        set status = $SYSTEM.CSP.LoadPageDir(dir)        
+        
+        do ..registerCompile(dir,status)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="registerCompile">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String,status:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[    set @..#STORAGEuCOMPILE@(file)=status
+]]></Implementation>
+</Method>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="compile">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    #dim file = ""
+    for {
+        set file = $order(@..#STORAGEuCOMPILE@(file),1)
+        quit:(file="")
+        
+        do ..compileRule(file)
+        do ..compileClass(file)        
+        do ..compileCSP(file)        
+    }
+    
+    do ..compileCSPDir()
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="clear">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    kill @..#STORAGEuCOMPILE
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="add">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>internalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ($listFind(..#COMPILE,##class(AutomatizeUtil).getExtension(internalName))>0){
+        set @..#STORAGEuCOMPILE@(internalName)=$$$NO
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getDir">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[    quit $$$FormatText("/%1/%2","csp",$namespace)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.AutomatizeStorage">
+<TimeCreated>64735,61923.46363</TimeCreated>
+
+<Parameter name="STORAGEuENVIRONMENT">
+<Final>1</Final>
+<Default>^%Studio.Environment</Default>
+</Parameter>
+
+<Parameter name="STORAGEuCOMPILE">
+<Final>1</Final>
+<Default>^%Studio.Compile</Default>
+</Parameter>
+
+<Method name="installDefault">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+..getStorageValue("Installer","automatize")=0){               
+        
+        do ..setStorageValue("UnitTest-LastTest","","")
+        do ..setStorageValue("UnitTest","SuperClass", "%UnitTest.TestCase")
+        do ..setStorageValue("UnitTest","namespace","TESTEUNITARIO")
+        do ..setStorageValue("UnitTest","package","test")
+        do ..setStorageValue("Integration","SlackEnable", $$$NO)
+        do ..setStorageValue("Integration","SlackUser", "")        
+        do ..setStorageValue("UnitTest","SuperClass", "")
+        
+        ; the last step.
+        do ..setStorageValue("Installer","automatize",$$$YES)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getStorageValue">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,keyOne:%String,keyTwo=""</FormalSpec>
+<Implementation><![CDATA[
+    if (keyTwo '=""){
+        quit $get(@..#STORAGEuENVIRONMENT@(process, keyOne, keyTwo))
+    } else {
+        quit $get(@..#STORAGEuENVIRONMENT@(process, keyOne))
+    }
+]]></Implementation>
+</Method>
+
+<Method name="setStorageValue">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,key:%String="",value:%String</FormalSpec>
+<Implementation><![CDATA[
+    if (key'=""){
+        set @..#STORAGEuENVIRONMENT@(process, key) = value
+    } else {
+        set @..#STORAGEuENVIRONMENT@(process) = value
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="deleteStorage">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>process:%String,key:%String=""</FormalSpec>
+<Implementation><![CDATA[
+    if (key '=""){
+      kill @..#STORAGEuENVIRONMENT@(process,key)
+    } else {
+      kill @..#STORAGEuENVIRONMENT@(process)
+    }
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.AutomatizeTest">
+<Import>%SourceControl.Automation.Test</Import>
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
+<TimeCreated>64261,63233.601792</TimeCreated>
+
+<Parameter name="FILEuTESTABLE">
+<Expression>$listBuild("cls")</Expression>
+</Parameter>
+
+<Parameter name="PACKAGEuTEST">
+<Default>test</Default>
+</Parameter>
+
+<Property name="classNameTest">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="classNameComplete">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="className">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="package">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="packageTest">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="packageReplace">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Parameter name="DIRECTIONuFINDuRIGHT">
+<Default>right</Default>
+</Parameter>
+
+<Parameter name="DIRECTIONuFINDuLEFT">
+<Default>left</Default>
+</Parameter>
+
+<Method name="createFrom">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>internalName:%String</FormalSpec>
+<ReturnType>%SourceControl.Automation.AutomatizeTest</ReturnType>
+<Implementation><![CDATA[    quit ..%New( internalName )
+]]></Implementation>
+</Method>
+
+<Method name="create">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%SourceControl.Automation.AutomatizeTest</ReturnType>
+<Implementation><![CDATA[    quit ..%New("")
+]]></Implementation>
+</Method>
+
+<Method name="%OnNew">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isTestable(className)){        
+        set ..classNameComplete = className
+        do ..registerPackage(className)
+        do ..registerClassName(className)
+        do ..registerPackageTest()
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isTestable">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ( $listFind(..#FILEuTESTABLE, ##class(AutomatizeUtil).getExtension(className) ) > 0)
+]]></Implementation>
+</Method>
+
+<Method name="isManagerExist">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled("%SourceControl.Automation.Test.Agent")
+]]></Implementation>
+</Method>
+
+<Method name="isPrefixTestExist">
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ($extract(className,1,4)="Test")
+]]></Implementation>
+</Method>
+
+<Method name="registerClassName">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %Integer = $length(className,".")    
+    #dim class = ##class(AutomatizeUtil).getNameFileNotExtensionAndPackages(className)
+    
+    if (..isPrefixTestExist(class)){
+        set ..className = class
+    } else {
+        set ..className = $$$FormatText("%1%2","Test",class)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="registerPackage">
+<FormalSpec>className:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %Integer = $length(className,".") 
+    set ..package = $piece(className,".",1,(size-2)) // 2 - Extension and class name.
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="registerPackageTest">
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..mountPackageTest()
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="mountPackageTest">
+<FormalSpec>direction:%String=..#DIRECTIONuFINDuRIGHT</FormalSpec>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim position As %Integer
+    #dim packageFinded = ""
+    #dim map As %String = ""
+    
+    do ##class(%SourceControl.Automation.Test.RegisterPackageTest).registerPackageTest( .map )    
+    set:(direction=..#DIRECTIONuFINDuRIGHT) packageFinded = ..findPackageLeftToRight(.map)
+    set:(direction=..#DIRECTIONuFINDuLEFT) packageFinded = ..findPackageRightToLeft(.map)
+    
+    if (packageFinded'=""){        
+        set ..packageTest = $replace(..package,..packageReplace,packageFinded,,1)
+    } else {
+        set ..packageTest = $replace(..package,"test.","")
+    }
+    
+    do ..isExistClassTestMoutaded(direction)
+]]></Implementation>
+</Method>
+
+<Method name="findPackageLeftToRight">
+<FormalSpec><![CDATA[&map]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim packageFinded,findPack = ""
+    #dim position As %Integer
+    #dim size As %Integer = $length(..package,".")
+    for position=1:1 {                
+        quit:(position>size)        
+        set findPack = $piece(..package,".",1,position)        
+        quit:(findPack="")
+                
+        set packageFinded = $get(map(findPack))
+        quit:(packageFinded'="")
+    }
+        
+    set ..packageReplace = findPack
+    quit packageFinded
+]]></Implementation>
+</Method>
+
+<Method name="findPackageRightToLeft">
+<FormalSpec><![CDATA[&map]]></FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim packageFinded,findPack = ""
+    #dim position As %Integer
+    #dim size As %Integer = $length(..package,".")
+    for position=0:1 {                
+        quit:(position>size)
+        
+        set findPack = $piece(..package,".",1,(size-position))
+        quit:(findPack="")
+        
+        set packageFinded = $get(map(findPack))
+        quit:(packageFinded'="")
+    }
+        
+    set ..packageReplace = findPack
+    quit packageFinded
+]]></Implementation>
+</Method>
+
+<Method name="isExistClassTestMoutaded">
+<FormalSpec>direction:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    do ..registerNameClassTest()
+    if ('..isClassCompiled(..classNameTest) && (direction=..#DIRECTIONuFINDuRIGHT)){
+        do ..mountPackageTest(..#DIRECTIONuFINDuLEFT)
+    }
+]]></Implementation>
+</Method>
+
+<Method name="registerNameClassTest">
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if ((..packageTest '= "") && (..#PACKAGEuTEST '=..packageTest)){                
+        set ..classNameTest = $$$FormatText("%1.%2.%3",..#PACKAGEuTEST,..packageTest,..className)
+    } else {        
+        set ..classNameTest = $$$FormatText("%1.%2",..#PACKAGEuTEST,..className)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isClassCompiled">
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(AutomatizeUtil).isClassCompiled(className)
+]]></Implementation>
+</Method>
+
+<Method name="run">
+<FormalSpec>method:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+         if (..isClassCompiled(..classNameTest)){ 
+            do ..registerLastTest()            
+            do:(method'="") $classMethod("%SourceControl.Automation.Test.Agent","run",..classNameTest,method)
+            do:(method="") $classMethod("%SourceControl.Automation.Test.Agent","run",..classNameTest)
+         } else {
+             if (..isTestable(..classNameComplete)){
+                write !,$$$Text("@Test.SemClasseDeTeste@[TesteUnitário] - Esta classe não possui uma classe de teste.","%Studio.Tools")
+             }
+         }
+    } else {
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runAllSuite">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+            do $classMethod("%SourceControl.Automation.Test.Agent","run")
+    } else {
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runPackage">
+<FormalSpec>package:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist()){
+            do $classMethod("%SourceControl.Automation.Test.Agent","run", package)
+    } else {
+        write !,$$$Text("@Test.SemClasseAgent@[TesteUnitário] - Não existe a classe '%SourceControl.Automation.Test.Agent' para rodar os testes.","%Studio.Tools")
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="runLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim lastTest As %String = ..getLastTest()
+    if (lastTest '= ""){
+        do $classMethod("%SourceControl.Automation.Test.Agent","run",lastTest)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isRunTest">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    if (..isManagerExist() && ..isTestable(..classNameComplete) && ..isClassCompiled(..classNameTest)){
+         quit $$$YES
+    }
+    quit $$$NO
+]]></Implementation>
+</Method>
+
+<Method name="createNewClass">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+     if (##class(%SourceControl.Automation.Test.CreateClassTest).createClass(..classNameTest)){
+        write !,$$$Text("@Test.NovaClasseTest@[TesteUnitário] - Classe de teste criada. - ","%Studio.Tools")
+        write ..classNameTest
+     }
+]]></Implementation>
+</Method>
+
+<Method name="getClassTest">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit ..classNameTest
+]]></Implementation>
+</Method>
+
+<Method name="registerLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    do ..setStorageValue("UnitTest-LastTest", $namespace, ..classNameTest )
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getLastTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit ..getStorageValue("UnitTest-LastTest", $namespace )
+]]></Implementation>
+</Method>
+
+<Method name="showMessageEncourageTest">
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    if ('..isRunTest()){
+        write !,$$$Text("@Test.AlertSemClasseTeste@[TesteUnitário] - Automatize seus testes, crie uma classe de teste.","%Studio.Tools")
+    } else {
+         if (+##class(%SourceControl.OptionState).getOption("%TestAutomatic")=$$$NO){                        
+            write !,$$$FormatText($$$Text("@Test.IncentivarRodarTeste@[TesteUnitário] - Esta classe possuí testes, execute-os sempre que fizer uma alteração pelo terminal usando: do ##class(%SourceControl.Automation.Test.Agent).run(""%1"")","%Studio.Tools"),..classNameTest)
+         }
+    }
+]]></Implementation>
+</Method>
+
+<Method name="clearResult">
+<Implementation><![CDATA[
+     if (..isManagerExist()){
+        do ##class(%SourceControl.Automation.Test.Agent).clearResult()
+     }
+]]></Implementation>
+</Method>
+
+<Method name="clearPopulate">
+<Implementation><![CDATA[
+     if (..isManagerExist()){
+        do ##class(%SourceControl.Automation.Test.Agent).clearPopulate()
+     }
+]]></Implementation>
+</Method>
+
+<Method name="autoTest">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+##class(%SourceControl.OptionState).getOption("%TestAutomatic")=$$$YES){
+        do ..run()
+    }
+    do ..showMessageEncourageTest()
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isClassTest">
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    return ..isPrefixTestExist(##class(AutomatizeUtil).getNameFileNotExtensionAndPackages(..classNameComplete))
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.AutomatizeUtil">
+<Final>1</Final>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64265,38792.223979</TimeCreated>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="getExtension">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    #dim extension AS %Sring = $piece(file,".",size,size)
+    quit $zconvert(extension,"L")
+]]></Implementation>
+</Method>
+
+<Method name="getNameFileNotExtension">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    quit $piece(file,".",1,(size-1))
+]]></Implementation>
+</Method>
+
+<Method name="getNameFileNotExtensionAndPackages">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim size As %String = $length(file,".")
+    quit $piece(file,".",(size-1),(size-1))
+]]></Implementation>
+</Method>
+
+<Method name="isClassCompiled">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(%CompiledClass).%ExistsId(className)
+]]></Implementation>
+</Method>
+
+<Method name="isClassAbstract">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(%ClassDefinition).%OpenId(className).Abstract
+]]></Implementation>
+</Method>
+
+<Method name="limitDescription">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>description:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    if ($length(description) > 20){
+        quit $extract(description,1,20)_"..."
+    }
+    quit description
+]]></Implementation>
+</Method>
+
+<Method name="getNamespaceRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>namespace:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim current As %String = $namespace
+    #dim propertys As %String 
+    zn "%SYS"
+    do ##class(Config.Namespaces).Get(namespace,.propertys)
+    zn current
+    quit propertys("Routines")
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Integration.CaptureResult">
+<Description>
+Capture results of your testing, results view in portal unit test in portal administrion Caché</Description>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64408,30730.655183</TimeCreated>
+
+<Parameter name="NAMEuSUITE">
+<Default>(root)</Default>
+</Parameter>
+
+<Parameter name="PORT">
+<Default>57772</Default>
+</Parameter>
+
+<Property name="listResults">
+<Type>%ArrayOfDataTypes</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="totalization">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Method name="getStatusAllSuites">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit ##class(%UnitTest.Report).GetTestStatus( $ZNSPACE,..getLastId() )=1
+]]></Implementation>
+</Method>
+
+<Method name="getLastId">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[    quit $get(^UnitTest.Result)
+]]></Implementation>
+</Method>
+
+<Method name="colectorListAllClassTested">
+<ReturnType>%SourceControl.Automation.Integration.CaptureResult</ReturnType>
+<Implementation><![CDATA[
+    #dim listBuildTime As %String
+    #dim id = ..getLastId()
+    #dim index = ""
+    set ..listResults = ##class(%ArrayOfDataTypes).%New()
+    for {
+        set index = $order(^UnitTest.Result(id,..#NAMEuSUITE,index),1,listBuildTime)
+        quit:(index="")
+        
+        do ..listResults.SetAt( $listGet(listBuildTime,2), index )
+    }
+    quit ##this
+]]></Implementation>
+</Method>
+
+<Method name="colectorListClassTestedWidthError">
+<ReturnType>%SourceControl.Automation.Integration.CaptureResult</ReturnType>
+<Implementation><![CDATA[
+    #dim listBuildTime As %String
+    #dim id = ..getLastId()
+    #dim index = ""
+    set ..listResults = ##class(%ArrayOfDataTypes).%New()
+    for {
+        set index = $order(^UnitTest.Result(id,..#NAMEuSUITE,index),1,listBuildTime)
+        quit:(index="")
+        
+        if ( $listGet(listBuildTime,1) = 0 ){
+            do ..listResults.SetAt( $listGet(listBuildTime,2), index )
+        }
+    }
+    quit ##this
+]]></Implementation>
+</Method>
+
+<Method name="colectorListClassTestedWidthSuccess">
+<ReturnType>%SourceControl.Automation.Integration.CaptureResult</ReturnType>
+<Implementation><![CDATA[
+    #dim listBuildTime As %String
+    #dim id = ..getLastId()
+    #dim index = ""
+    set ..listResults = ##class(%ArrayOfDataTypes).%New()
+    for {
+        set index = $order(^UnitTest.Result(id,..#NAMEuSUITE,index),1,listBuildTime)
+        quit:(index="")
+        
+        if ( $listGet(listBuildTime,1) = 1 ){
+            do ..listResults.SetAt( $listGet(listBuildTime,2), index )
+        }
+    }
+    quit ##this
+]]></Implementation>
+</Method>
+
+<Method name="colectorResultClassTestedWidthSuccessAndErrors">
+<ReturnType>%SourceControl.Automation.Integration.CaptureResult</ReturnType>
+<Implementation><![CDATA[
+    #dim listBuildTime As %String
+    #dim id = ..getLastId()
+    #dim index = ""
+    #dim success,errors As %Integer = 0
+    set ..listResults = ##class(%ArrayOfDataTypes).%New()
+    for {
+        set index = $order(^UnitTest.Result(id,..#NAMEuSUITE,index),1,listBuildTime)
+        quit:(index="")
+        
+        if ( $listGet(listBuildTime,1) = 0 ){
+            set errors = $increment(errors)
+        } else {
+            set success = $increment(success)
+        }
+    }
+    set ..totalization = $$$FormatText($$$Text("@ExecutadoComSucessoEErros@%1 executado(s) com sucesso e %2 com erro(s).","%Studio.Tools"), success, errors )
+    quit ##this
+]]></Implementation>
+</Method>
+
+<Method name="getTimeAll">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[     quit $listGet(^UnitTest.Result(..getLastId(),..#NAMEuSUITE),2)
+]]></Implementation>
+</Method>
+
+<Method name="getResult">
+<ReturnType>%ArrayOfDataTypes</ReturnType>
+<Implementation><![CDATA[    quit ..listResults
+]]></Implementation>
+</Method>
+
+<Method name="getListInLine">
+<FormalSpec>limit:%Integer=20</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim inline As %String = ""
+    #dim index As %Integer
+    #dim separator,data As %String
+    #dim count As %Integer
+    for count=1:1 {        
+        set data = ..listResults.GetNext(.index)
+        quit:(index="")
+        
+        #dim text = index_" - time: "_data        
+        set separator = $select(inline="":"",1:"\n")
+        
+        if (count = limit){
+            set text = $$$Text("@Mais@mais", "%Studio.Tools")
+            set inline = inline_separator_text
+            quit
+        }
+        
+        set inline = inline_separator_"- "_text
+    }
+    quit inline
+]]></Implementation>
+</Method>
+
+<Method name="getTotalization">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit ..totalization
+]]></Implementation>
+</Method>
+
+<Method name="getLink">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set s = ##class(%RoutineMgr).GetWebServerPort(.p, .h, .up, .url)
+    if $E(url,$L(url))="/" {
+        set url=$E(url,1,$L(url)-1)
+    }
+    If ($$$ISERR(s)) || ($G(url)="") Set url = "http://127.0.0.1:57772"
+    set url=url_$$getDefaultApp^%SYS.cspServer2($ZU(5))   
+    
+    #dim url=url_"/%25UnitTest.Portal.Indices.cls?Index="_..getLastId()    
+    quit url
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Integration.Jenkins">
+<Description><![CDATA[
+Extend %UnitTest manager to output unit test results in JUnit format.
+This relies on the fact that unit test results are stored in <b>^UnitTest.Result</b> global. Results displayed on CSP pages come from this global.
+https://community.intersystems.com/post/unit-test-intersystems-jenkins]]></Description>
+<Super>%UnitTest.Manager</Super>
+<TimeCreated>64462,42860.994236</TimeCreated>
+
+<Method name="exportJUnitXML">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pFileName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set File=##class(%File).%New(pFileName)
+    set i=$order(^UnitTest.Result(""),-1)
+    if i="" quit $$$OK // no results
+    
+    kill ^||TMP // results global
+    set suite="" for {
+        set suite=$order(^UnitTest.Result(i,suite))
+        quit:suite=""
+        set ^||TMP("S",suite,"time")=$listget(^UnitTest.Result(i,suite),2)
+        
+        set case="" for {
+            set case=$order(^UnitTest.Result(i,suite,case))
+            quit:case=""
+            
+            if $increment(^||TMP("S",suite,"tests"))
+            set ^||TMP("S",suite,"C",case,"time")=$listget(^UnitTest.Result(i,suite),2)
+            set method="" for {
+                set method=$order(^UnitTest.Result(i,suite,case,method))
+                quit:method=""
+                set ^||TMP("S",suite,"C",case,"M",method,"time")=$listget(^UnitTest.Result(i,suite,case,method),2)
+                set assert="" for {
+                    set assert=$order(^UnitTest.Result(i,suite,case,method,assert))
+                    quit:assert=""
+                    if $increment(^||TMP("S",suite,"assertions"))
+                    if $increment(^||TMP("S",suite,"C",case,"assertions"))
+                    if $increment(^||TMP("S",suite,"C",case,"M",method,"assertions"))
+                    if $listget(^UnitTest.Result(i,suite,case,method,assert))=0 {
+                        if $increment(^||TMP("S",suite,"failures"))
+                        if $increment(^||TMP("S",suite,"C",case,"failures"))
+                        if $increment(^||TMP("S",suite,"C",case,"M",method,"failures"))
+                        set ^||TMP("S",suite,"C",case,"M",method,"failure")=$get(^||TMP("S",suite,"C",case,"M",method,"failure"))
+                            _$listget(^UnitTest.Result(i,suite,case,method,assert),2)
+                            _": "_$listget(^UnitTest.Result(i,suite,case,method,assert),3)
+                            _$char(13,10)
+                    }
+                }
+                if ($listget(^UnitTest.Result(i,suite,case,method))=0)
+                && ('$data(^||TMP("S",suite,"C",case,"M",method,"failures"))) {
+                    if $increment(^||TMP("S",suite,"failures"))
+                    if $increment(^||TMP("S",suite,"C",case,"failures"))
+                    if $increment(^||TMP("S",suite,"C",case,"M",method,"failures"))
+                    set ^||TMP("S",suite,"C",case,"M",method,"failure")=$get(^||TMP("S",suite,"C",case,"M",method,"failure"))
+                        _$listget(^UnitTest.Result(i,suite,case,method),3)
+                        _": "_$listget(^UnitTest.Result(i,suite,case,method),4)
+                        _$char(13,10)
+                }
+            }
+            
+            if $listget(^UnitTest.Result(i,suite,case))=0
+            && ('$data(^||TMP("S",suite,"C",case,"failures"))) {
+                if $increment(^||TMP("S",suite,"failures"))
+                if $increment(^||TMP("S",suite,"C",case,"failures"))
+                if $increment(^||TMP("S",suite,"C",case,"M",case,"failures"))
+                set ^||TMP("S",suite,"C",case,"M",case,"failure")=$get(^||TMP("S",suite,"C",case,"M",case,"failure"))
+                    _$listget(^UnitTest.Result(i,suite,case),3)
+                    _": "_$listget(^UnitTest.Result(i,suite,case),4)
+                    _$char(13,10)
+            }
+        }
+    }
+    
+    do File.Open("WSN")
+    do File.WriteLine("<?xml version=""1.0"" encoding=""UTF-8"" ?>")
+    do File.WriteLine("<testsuites>")
+    set suite="" for {
+        set suite=$order(^||TMP("S",suite))
+        quit:suite=""
+        do File.Write("<testsuite")
+        do File.Write(" name="""_$zstrip($zconvert($zconvert(suite,"O","XML"),"O","UTF8"),"<=>W")_"""")
+        do File.Write(" assertions="""_$get(^||TMP("S",suite,"assertions"))_"""")
+        do File.Write(" time="""_$get(^||TMP("S",suite,"time"))_"""")
+        do File.Write(" tests="""_$get(^||TMP("S",suite,"tests"))_"""")
+        do File.WriteLine(">")
+        set case="" for {
+            set case=$order(^||TMP("S",suite,"C",case))
+            quit:case=""
+            do File.Write("<testsuite")
+            do File.Write(" name="""_$zstrip($zconvert($zconvert(case,"O","XML"),"O","UTF8"),"<=>W")_"""")
+            do File.Write(" assertions="""_$get(^||TMP("S",suite,"C",case,"assertions"))_"""")
+            do File.Write(" time="""_$get(^||TMP("S",suite,"C",case,"time"))_"""")
+            do File.Write(" tests="""_$get(^||TMP("S",suite,"C",case,"tests"))_"""")
+            do File.WriteLine(">")
+            
+            set method="" for {
+                set method=$order(^||TMP("S",suite,"C",case,"M",method))
+                quit:method=""
+                do File.Write("<testcase")
+                do File.Write(" name="""_$zstrip($zconvert($zconvert(case,"O","XML"),"O","UTF8"),"<=>W")_"""")
+                do File.Write(" assertions="""_$get(^||TMP("S",suite,"C",case,"M",method,"assertions"))_"""")
+                do File.Write(" time="""_$get(^||TMP("S",suite,"C",case,"M",method,"time"))_"""")
+                do File.WriteLine(">")
+                if $data(^||TMP("S",suite,"C",case,"M",method,"failure")) {
+                    do File.Write("<failure type=""cache-error"" message=""Cache Error"">")
+                    do File.Write($zstrip($zconvert($zconvert(^||TMP("S",suite,"C",case,"M",method,"failure"),"O","XML"),"O","UTF8"),"<=>W"))
+                    do File.WriteLine("</failure>")
+                }
+                do File.WriteLine("</testcase>")
+            }
+            do File.WriteLine("</testsuite>")
+        }
+        do File.WriteLine("</testsuite>")
+    }
+    do File.WriteLine("</testsuites>")
+    do File.Close()
+    kill ^||TMP
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Integration.Slack">
+<Super>%RegisteredObject,SlackConfiguration,%SourceControl.Automation.AutomatizeStorage</Super>
+<TimeCreated>64407,61564.853977</TimeCreated>
+
+<Parameter name="URIuSLACK">
+<Default>hooks.slack.com</Default>
+</Parameter>
+
+<Parameter name="ENABLE">
+<Default>^UnitTest.Slack</Default>
+</Parameter>
+
+<Method name="enable">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[    quit (+..getStorageValue("Integration","SlackEnable") = $$$YES)
+]]></Implementation>
+</Method>
+
+<Method name="getUserName">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim userName = ..getStorageValue("Integration","SlackUser")
+    quit $select(userName="":$ZU(110),1:userName)
+]]></Implementation>
+</Method>
+
+<Method name="notify">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    quit:('..enable()) $$$YES
+    if ( '##class(CaptureResult).getStatusAllSuites() ){              
+        do ..error( file )        
+    } else {
+        do ..success( file )
+    }
+    quit $$$YES
+]]></Implementation>
+</Method>
+
+<Method name="error">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+      
+    #dim text = $$$FormatText($$$Text("@Slack.TituloMensagem@%1 rodou os teste do pacote/classe: %2","%StudioTools"),..getUserName(), file)    
+    #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
+    #dim id = captureResult.getLastId()
+    
+    #dim body = captureResult.colectorListClassTestedWidthError().getListInLine()         
+    #dim link = captureResult.getLink()
+    #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()
+    #dim title = $$$FormatText($$$Text("@Slack.MensagemFalha@%1 - Houve falha nos testes","%StudioTools"),id)    
+    #dim timeAll = captureResult.getTimeAll()
+    
+    do ..send( ..jsonText( title, text, body, "#FF0000", timeAll, totalization, link ) )
+]]></Implementation>
+</Method>
+
+<Method name="success">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+      
+    #dim text = $$$FormatText($$$Text("@Slack.TituloMensagem@%1 rodou os teste do pacote/classe: %2","%StudioTools"),..getUserName(), file)
+    #dim captureResult As CaptureResult = ##class(CaptureResult).%New()
+    #dim timeAll = captureResult.getTimeAll()
+    #dim id = captureResult.getLastId()        
+    #dim title = $$$FormatText($$$Text("@Slack.MensagemSucesso@","%StudioTools"),id)
+    #dim link = captureResult.getLink()
+    #dim totalization = captureResult.colectorResultClassTestedWidthSuccessAndErrors().getTotalization()     
+    
+    do ..send( ..jsonText( title, text, "",, timeAll, totalization, link ) )
+]]></Implementation>
+</Method>
+
+<Method name="send">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>jsonText:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+     #dim status As %Status
+     set http=##class(%Net.HttpRequest).%New()
+      do http.SetHeader("Content-Type","application/json; charset=utf-8")
+     set http.SSLConfiguration = ..#SSLuCONFIGURATION
+     set http.Https = $$$YES       
+     set http.Timeout = 3
+     set http.Server = ..#URIuSLACK
+      do http.EntityBody.Write( jsonText )
+     set status = http.Post( ..#SERVICE )      
+      kill http
+     quit $SYSTEM.Status.GetErrorCodes( status )
+]]></Implementation>
+</Method>
+
+<Method name="jsonText">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>title:%String,messagem:%String,body:%String,colorHex:%String="#36a64f",timeFlag:%String,totalizationFinal:%String,linkResults:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim timeStamp = 0 ;$ztimestamp
+    #dim textJSON As %String
+    
+    set textJSON = {
+        "attachments" : [{
+            "color" : (colorHex),
+            "pretext" : (messagem),
+            "title" : (title),
+            "title_link" : (linkResults),
+            "text" : (body),
+            "footer": ($$$Text("@Slack.RodapeMensage@Testes Automatizados","%Studio.Tools")),
+            "footer_icon": (..#ICONuNOTIFY),
+            "fields": [{
+                "title": ($$$Text("@Slack.TempoTotal@Tempo total","%Studio.Tools")),
+                "short": "true",
+                "value": (timeFlag)
+            },{
+                "title": ($$$Text("@Slack.Resultado@Resultado","%Studio.Tools")),
+                "short": "true",
+                "value": (totalizationFinal)
+            }]
+        }]
+    }
+      
+    quit (textJSON).$toJSON()
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Integration.SlackConfiguration">
+<Description>
+For new configuration, is necessary remane this archive for:
+%SourceControl.Automation.Integration.SlackConfiguration</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64506,36518.585824</TimeCreated>
+
+<Parameter name="SERVICE">
+<Description>
+URI integration Slack
+ex:/services/XXX/ZZZ/YYY</Description>
+<Default>/services/XXX/ZZZ/YYY</Default>
+</Parameter>
+
+<Parameter name="SSLuCONFIGURATION">
+<Description>
+Your configuration defined in portal administrion Caché(Configuration SSL/TLS)</Description>
+<Default></Default>
+</Parameter>
+
+<Parameter name="ICONuNOTIFY">
+<Description>
+Your icon of representation of enterprise</Description>
+<Default>http://</Default>
+</Parameter>
+
+<Parameter name="URIuSLACK">
+<Default>hooks.slack.com</Default>
+</Parameter>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Integration.SlackConfigurationSample">
+<Description>
+For new configuration, is necessary remane this archive for:
+%SourceControl.Automation.Integration.SlackConfiguration</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64506,36518.585824</TimeCreated>
+
+<Parameter name="SERVICE">
+<Description>
+URI integration Slack
+ex:/services/XXX/ZZZ/YYY</Description>
+<Default>/services/xxx/yyy/zzz</Default>
+</Parameter>
+
+<Parameter name="SSLuCONFIGURATION">
+<Description>
+Your configuration defined in portal administrion Caché(Configuration SSL/TLS)</Description>
+<Default>xxx</Default>
+</Parameter>
+
+<Parameter name="ICONuNOTIFY">
+<Description>
+Your icon of representation of enterprise</Description>
+<Default>https://www.yoursite.com/profile.png</Default>
+</Parameter>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Test.Agent">
+<Super>%RegisteredObject,%SourceControl.Automation.AutomatizeStorage</Super>
+<TimeCreated>63973,40417.786247</TimeCreated>
+
+<Parameter name="PACKAGEuDEFAULT">
+<Final>1</Final>
+<Default>test</Default>
+</Parameter>
+
+<Method name="clear">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%SourceControl.Automation.Test.Agent</ReturnType>
+<Implementation><![CDATA[
+    #dim currentNamespace as %String = $namespace
+    
+    do ..changeNamespaceForTest()
+    do ##class(test.util.PopulateTools).purgeDados( force )
+    do ..backToTheCurrentNamespace(currentNamespace)
+    
+    quit ..%New()
+]]></Implementation>
+</Method>
+
+<Method name="run">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String=..#PACKAGEuDEFAULT,method:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim return as %Status
+    #dim currentNamespace as %String = $namespace
+    
+    write !,$$$FormatText($$$Text( "@ExecutandoTeste@Executando teste para: %1", "%Studio.Tools"), file)
+    
+    do ..changeNamespaceForTest()
+    
+    if (..isTestClass(file)) {
+        set return = ..runTestByClass(file, method, currentNamespace)
+    } else {
+        set return = ..runTestByPack(file)
+    }
+    
+    job ..notifyIntregations(file, method)::0
+    do ..backToTheCurrentNamespace(currentNamespace)
+    
+    quit return
+]]></Implementation>
+</Method>
+
+<Method name="changeNamespaceForTest">
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim namespaceAllow As %String
+     
+     set namespaceAllow = ..getStorageValue("UnitTest","namespace",$namespace)
+     if (namespaceAllow=""){
+        set namespaceAllow = ..getStorageValue("UnitTest","namespace")
+     }
+    
+    write !,$$$FormatText($$$Text( "@NamespaceAtual@Namespace atual: %1", "%Studio.Tools"), $namespace )
+    
+    if (namespaceAllow '=""){
+        zn namespaceAllow
+        write !,$$$FormatText($$$Text( "@AlterandoNamespaceTeste@Alterado namespace atual para namespace de teste: %1", "%Studio.Tools"), $namespace )
+    } else {
+        write !,$$$Text( "@ConfigNamespaceTesteNaoExiste@Não existe um namespace de teste configurado, por favor configure executando: 'do ##class(%SourceControl.Instalation.Manager).install()' no seu namespace de trabalho.", "%Studio.Tools")
+    }
+]]></Implementation>
+</Method>
+
+<Method name="backToTheCurrentNamespace">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>namespaceWork:%String</FormalSpec>
+<Private>1</Private>
+<Implementation><![CDATA[
+    if (namespaceWork '= $namespace) {
+        znspace namespaceWork
+        write !,$$$FormatText($$$Text( "@RetornandoNamespaceAtual@Retornado ao namespace atual: %1", "%Studio.Tools"), $namespace )
+    }
+]]></Implementation>
+</Method>
+
+<Method name="isTestClass">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String=..#PACKAGEuDEFAULT</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim pieceList, lastPiece as %String = ""
+    
+    set pieceList = $listFromString(file, ".")
+    set lastPiece = $listGet(pieceList, $listLength(pieceList))
+    
+    quit ($extract(lastPiece, 1, 4) = "Test")
+]]></Implementation>
+</Method>
+
+<Method name="isNamespaceIsNamespaceRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>currentNamespace</FormalSpec>
+<Implementation><![CDATA[
+    #dim test,current As %String
+    
+    set test = $ZConvert(##class(%SourceControl.Automation.AutomatizeUtil).getNamespaceRoutines($namespace),"U")
+    set current = $zConvert(currentNamespace,"U")
+    quit (test = current)
+]]></Implementation>
+</Method>
+
+<Method name="runTestByClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testCase,method="",currentNamespace</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (..isNamespaceIsNamespaceRoutines(currentNamespace)){
+        quit ##class(Manager).DebugRunTestCase("", testCase,"",method)
+    } else {
+        write !,$$$FormatText($$$Text( "@ValidaAmbienteTesteRotinas@A configuração de 'rotinas' do namespace %1, deve ser configurada para utilizar as 'rotinas' do namespace %2, para que os testes possam rodar.", "%Studio.Tools"), $namespace, currentNamespace)
+        quit $$$OK
+    }
+]]></Implementation>
+</Method>
+
+<Method name="runTestByPack">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>package:%String=..#PACKAGEuDEFAULT</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+   #dim fileName As %String = $get(^UnitTestRoot)_"\PackageTests.xml"
+   
+   do $SYSTEM.OBJ.ExportPackage( package, fileName )
+   quit ##class(Manager).RunTest(,"/nodelete")
+]]></Implementation>
+</Method>
+
+<Method name="clearResult">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim namespace As %String = $namespace
+    do ..changeNamespaceForTest()
+    do ##class(Manager).PurgeResult()
+    do ..backToTheCurrentNamespace(namespace)
+]]></Implementation>
+</Method>
+
+<Method name="clearPopulate">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim namespace As %String = $namespace
+    do ..changeNamespaceForTest()
+    do $classmethod("test.util.PopulateTools","purgeDados")
+    do ..backToTheCurrentNamespace(namespace)
+]]></Implementation>
+</Method>
+
+<Method name="notifyIntregations">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>file:%String,method:%String</FormalSpec>
+<Implementation><![CDATA[
+    if ($namespace '= "CI"){    
+        if (##class(%SourceControl.Automation.AutomatizeUtil).isClassCompiled("%SourceControl.Automation.Integration.Slack")){        
+            do ##class(%SourceControl.Automation.Integration.Slack).notify( file )
+        }
+    }
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Test.CreateClassTest">
+<Import>%SourceControl.Automation</Import>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64873,54271.607802</TimeCreated>
+
+<Method name="createClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>nameClass:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set class = ##class(%Dictionary.ClassDefinition).%New(nameClass)
+    set class.Super = ..getSuperClassTest()
+    set class.ProcedureBlock = $$$YES
+    $$$ThrowOnError(class.%Save())
+    return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getSuperClassTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim class As %String = ##class(AutomatizeStorage).getStorageValue("UnitTest","SuperClass")
+    return $select(class="":"%UnitTest.TestCase",1:class)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Test.Manager">
+<Super>%UnitTest.Manager</Super>
+<TimeCreated>63973,40417.786247</TimeCreated>
+
+<Method name="Cleanup">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    do ..cleanDataOfPopulate()
+    #; Remove any public variables and close any open objects
+    Kill
+    Set sc=$$$OK
+    If $tlevel {
+        Set rc=$$$ERROR($$$GeneralError,"Transaction left open after test: "_$tlevel)
+        Set sc=$$$ADDSC(sc,rc)
+        While $tlevel { Tcommit }
+    }
+    If $zu(139) {
+        Set rc=$$$ERROR($$$GeneralError,"A test left a transactions suspended")
+        Set sc=$$$ADDSC(sc,rc)
+        Do $zu(139,0)
+    }
+    #; Check for any locks left by the test in this process
+    Set rset=##class(%ResultSet).%New("%SYS.LockQuery:List"),locks=""
+    Do rset.Execute("P"_$job)
+    While rset.Next() {
+        Set locks=locks_rset.Data("LockString")_","
+        If $length(locks)>512 Set locks=locks_"...," Quit
+    }
+    If locks'="" {
+        Set rc=$$$ERROR($$$GeneralError,"Locks left after unit test run: "_$extract(locks,1,*-1))
+        Set sc=$$$ADDSC(sc,rc)
+        Lock
+    }
+    Set $ECode="",$ZError="" Do $$$ZuSetState(40,$$$ZuGetDefault(40)),$$$ZuSetPzuints(5,0),$$$ZuFixDate
+    #; Cleanup any $sortbegin there are active
+    Set tmp=$sortend(,0)
+    If tmp {
+        Set rc=$$$ERROR($$$GeneralError,"Test left $sortbegin open without closing it")
+        Set sc=$$$ADDSC(sc,rc)
+    }
+    Quit sc
+]]></Implementation>
+</Method>
+
+<Method name="cleanDataOfPopulate">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (##class(%SourceControl.Automation.AutomatizeUtil).isClassCompiled("test.util.Populate")){
+        do ##class(test.util.Populate).destroy()
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Automation.Test.RegisterPackageTest">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64285,36307.762499</TimeCreated>
+
+<Method name="registerPackageTest">
+<Description>
+Mapping packages of test legacy of ERP</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&map:%String]]></FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+            
+    ; Register packages of diference path of project.
+	set map("fi")=""
+    quit $get(map)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Git.Utils">
+<Description>
+Code of repository:
+https://github.com/intersystems-ru/cache-tort-git </Description>
+<Abstract>1</Abstract>
+<IncludeCode>%occStatus,%occErrors</IncludeCode>
+<ProcedureBlock>1</ProcedureBlock>
+<TimeCreated>62657,53384.637236</TimeCreated>
+
+<Parameter name="Storage">
+<Default>^Git</Default>
+</Parameter>
+
+<Parameter name="InstallNamespace">
+<Default>%SYS</Default>
+</Parameter>
+
+<Parameter name="Slash">
+<Expression>$case($system.Version.GetOS(),"Windows":"\",:"/")</Expression>
+</Parameter>
+
+<Parameter name="SCListFilename">
+<Description>
+Name of the file with version controlled items</Description>
+<Default>sc-list.txt</Default>
+</Parameter>
+
+<Parameter name="GitMenuItems">
+<Default>,%Settings,%Commit,%Pull,%Fetch,%Switch,%Merge,%Push,%Diff,%RepoStatus,%Resolve,%Revert,%Log,%StashSave,%StashPop,</Default>
+</Parameter>
+
+<Parameter name="ImportAfterGitMenuItems">
+<Default>,%Clone,%Commit,%Pull,%Fetch,%Push,%Resolve,%StashPop,</Default>
+</Parameter>
+
+<Parameter name="GitContextMenuItems">
+<Default>,%Diff,%Blame,</Default>
+</Parameter>
+
+<Method name="InstallNamespaceStorage">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Replace(..#Storage,"^","^["""_..#InstallNamespace_"""]")
+]]></Implementation>
+</Method>
+
+<Method name="DefaultTemp">
+<Description>
+Returns root temp folder</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Get(@..InstallNamespaceStorage()@("%defaultTemp"), "c:\temp\")
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// 8012 because this error has corresponding error message
+
+]]></Content>
+</UDLText>
+
+<Method name="MakeError">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>msg:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[$$$ERROR(8012,"Git",msg)
+]]></Implementation>
+</Method>
+
+<Method name="TempFolder">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Get(@..#Storage@("settings","namespaceTemp"),..DefaultTemp()_$Translate($znspace,"%")_..#Slash)
+]]></Implementation>
+</Method>
+
+<Method name="GroupByFolder">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Get(@..#Storage@("settings","groupByFolder"), 0)
+]]></Implementation>
+</Method>
+
+<Method name="MappingsNode">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Name(@..#Storage@("settings","mappings"))
+]]></Implementation>
+</Method>
+
+<Method name="GitBinExists">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #if $system.Version.GetOS()'="Windows" 
+     quit 0
+    #else 
+    if '$Data(@..InstallNamespaceStorage()@("%gitBinExists")) {
+        set @..InstallNamespaceStorage()@("%gitBinExists") = ##class(%File).Exists($Extract(..GitBinPath(),2,*-1))
+    }
+    quit @..InstallNamespaceStorage()@("%gitBinExists")
+    #endif
+]]></Implementation>
+</Method>
+
+<Method name="GitBinPath">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set binPath = $Get(@..InstallNamespaceStorage()@("%gitBinPath"))
+    quit $case($Extract(binPath),"""":binPath,:""""_binPath_"""")
+]]></Implementation>
+</Method>
+
+<Method name="NeedSettings">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[(..DefaultTemp() = "") ||  (..GitBinPath() = "") ||  (..GitBinPath() = """")
+]]></Implementation>
+</Method>
+
+<Method name="InstallNamespace">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[..#InstallNamespace
+]]></Implementation>
+</Method>
+
+<Method name="AddSlash">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>path:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    if path'="" && ($Extract(path,*)'=..#Slash) {
+        set path = path_..#Slash
+    }
+    quit path
+]]></Implementation>
+</Method>
+
+<Method name="UpdateSettings">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&settings]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    // we change ^STORAGE to ^["InstallNamespace"]|STORAGE, so we store path to git.exe in one place
+    set @..InstallNamespaceStorage()@("%gitBinPath") = settings("gitBinPath")
+    kill @..InstallNamespaceStorage()@("%gitBinExists")
+    
+    // let's add slash in the end
+    set @..InstallNamespaceStorage()@("%defaultTemp") = ..AddSlash(settings("defaultTemp"))
+    
+    set @..#Storage@("settings","namespaceTemp") = ..AddSlash(settings("namespaceTemp"))
+    set @..#Storage@("settings","groupByFolder") = $case(settings("groupByFolder"), "":"", :1)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GitCommand">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>commandName:%String,itemName:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+..GitBinPath()_" /command:"_commandName_
+               " /path:"""_..TempFolder()_
+               $case(itemName,"":"",:..ExternalName(itemName))_""""_
+               $case(commandName,"clone":" /exactpath:"_..TempFolder(),:"")
+]]></Implementation>
+</Method>
+
+<Method name="IsMenuGitCommand">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>menuItemName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[$Find(..#GitMenuItems, ","_menuItemName_",") > 0
+]]></Implementation>
+</Method>
+
+<Method name="IsContextMenuGitCommand">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>menuItemName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[$Find(..#GitContextMenuItems, ","_menuItemName_",") > 0
+]]></Implementation>
+</Method>
+
+<Method name="IsImportAfter">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>menuItemName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[$Find(..#ImportAfterGitMenuItems, ","_menuItemName_",") > 0
+]]></Implementation>
+</Method>
+
+<Method name="UserAction">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,MenuName:%String,&Target:%String,&Action:%String,&Reload:%Boolean]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #define Force 1
+    #dim menuName As %String = $Piece(MenuName,",")
+    #dim menuItemName As %String = $Piece(MenuName,",",2)
+    #dim ec As %Status = $$$OK
+    
+    if ..GitBinExists() = 0 && (menuItemName'="%Cache-Git-Settings") && 
+            ($system.Version.GetOS()="Windows") {
+        write !!,"===Path to tortoisegitproc.exe not found: "_..GitBinPath()_"!===",!
+    }
+    
+    if (menuName = "%SourceMenu") {
+        if (menuItemName = "%Cache-Git-Settings") {
+            set Action = 2
+            set Target = ##class(%cspapp.gitprojectsettings).%GetParameter("CSPURL")_"?NSpace="_$znspace_"&Username="_$username
+        }elseif (menuItemName = "%CreateRepo") {
+            if ##class(%File).CreateDirectoryChain(..TempFolder()) {
+                // cleanup items info
+                kill @..#Storage@("items")
+                kill @..#Storage@("TSH")
+                set Action = 3
+                set Target = ..GitCommand("repocreate")
+            } else {
+                set ec = ..MakeError("Unable to create folder "_..TempFolder())
+            }
+        }elseif (menuItemName = "%Export") || (menuItemName = "%ExportForce") {
+            write "==export start==",!
+            set ec = ..ExportAll($case(menuItemName="%ExportForce",1:$$$Force,:0))
+            if ec {
+                write !,"==export done==",!
+            }
+        }elseif (menuItemName = "%Import") {
+            set ec = ..ImportAll()
+            set Reload = 1
+        }elseif (menuItemName = "%ImportForce") {
+            set ec = ..ImportAll($$$Force)
+            set Reload = 1
+        }elseif (menuItemName = "%Clone") {
+            if ##class(%File).CreateDirectoryChain(..TempFolder()) {
+                // cleanup items info
+                kill @..#Storage@("items")
+                kill @..#Storage@("TSH")
+                set Action = 3
+                set Target = ..GitCommand("clone", "")
+            } else {
+                set ec = ..MakeError("Unable to create folder "_..TempFolder())
+            }
+        }elseif (menuItemName = "%OpenRepoFolder") {
+            set Action = 3
+            set Target = ..TempFolder()
+        }elseif ..IsMenuGitCommand(menuItemName) {
+                set Action = 3
+                #dim command As %String = $ZConvert($Extract(menuItemName, 2, *), "L")
+                set ec = $$$OK
+                if $Data(@..#Storage@("settings","hook"),hook)=1 {
+                    set $ListBuild(class,method) = hook
+                    set ec = $classmethod(class, method, command, InternalName)
+                }
+                if $$$ISOK(ec) {
+                    set Target = ..GitCommand(command)
+                }
+        }
+    }elseif (menuName = "%SourceMenuContext") {
+        
+        if (..Type(InternalName) = "csp") && ($Extract(InternalName,1) '= "/") {
+            set InternalName = "/" _ InternalName
+        }
+        
+        if (menuItemName = "%AddToSC") {
+            set ec = ..AddToSourceControl(InternalName)
+        }elseif (menuItemName = "%RemoveFromSC") {
+            set ec = ..RemoveFromSourceControl(InternalName)
+        }
+        if ..IsContextMenuGitCommand(menuItemName) {
+            set Action = 3
+            set command = $ZConvert($Extract(menuItemName, 2, *), "L")
+            set Target = ..GitCommand(command, InternalName)
+        }
+    }
+    if ..IsImportAfter(menuItemName) && (Action = 3) {
+        write "Choose Import All menu after work with Git!", !
+    }
+    //w Target,!
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="AfterUserAction">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[Type:%Integer,Name:%String,InternalName:%String,Answer:%Integer,Msg:%String="",&Reload:%Boolean]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="IsNamespaceInGit">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[##class(%File).Exists(..TempFolder()_".git")
+]]></Implementation>
+</Method>
+
+<Method name="NormalizeFolder">
+<Description><![CDATA[
+replaces any slashes with the ones for current OS<br/>
+removes first slash if present<br/>
+adds last slash if not present<br/>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>folder:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set folder = $Translate(folder, "/", ..#Slash)
+    set:$Extract(folder)=..#Slash $Extract(folder) = ""
+    set:$Extract(folder,*)'=..#Slash folder = folder _ ..#Slash
+    quit folder
+]]></Implementation>
+</Method>
+
+<Method name="ExternalName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    set name = $Translate(InternalName, "/", ..#Slash)
+
+    // lower case for extensions
+    #dim extension As %String = $ZConvert($Piece(name,".",$Length(name,".")),"L")
+    set $Piece(name,".",$Length(name,".")) = extension
+    
+    #dim groupByFolder As %Boolean = ..GroupByFolder()
+    // we shall put classes in different folders
+    if extension = "cls" {
+        set name = $Translate( $Piece(name,".", 1, $Length(name,".")-1), ".", ..#Slash)_".cls"
+    } elseif groupByFolder {
+        // If groupByFolder = 1 then we put inc, mac, int in corresponding folder, not in root.
+        // For example project.include.inc will be placed in project\include.inc.xml
+        set sep = $Case(extension, "dfi" : "-", : ".")
+        set name = $Translate($Piece(name,".", 1, $Length(name,".")-1), sep, ..#Slash)_"." _ extension
+    }
+        
+    // we shall delete csp-app from csp files
+    if $Extract(name, 1) = ..#Slash {
+        set $Extract(name, 1) = ""
+    }
+    if $Piece(name, ..#Slash, 1) = "csp" {
+        set $Piece(name, ..#Slash, 1, 2) = "csp"
+    }
+
+    set mappings = $Data(@..MappingsNode(), rootFolder)
+    
+    if mappings#10 = 1 { // value in root
+        set rootFolder = ..NormalizeFolder(rootFolder)
+    }
+    
+    if mappings >= 10 { //values in leaves
+        set type = ..Type(InternalName)
+        
+        if $Data(@..MappingsNode()@(type), folder) {
+            set folder = ..NormalizeFolder(folder)
+        }
+    }
+    
+    set name = $Get(rootFolder) _ $Get(folder) _ name
+    
+    // write "name=",name,!
+    // write "external name = ", $Translate(name," *?","___")_".xml", !
+    quit $Translate(name," *?","___")_".xml"
+]]></Implementation>
+</Method>
+
+<Method name="AddToSourceControl">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim i As %Integer
+    #dim ec As %Status = $$$OK
+    for i = 1:1:$Length(InternalName, ",") {
+        #dim item As %String = ..NormalizeExtension($Piece(InternalName, ",", i))
+        set @..#Storage@("items", item) = ""
+        #dim sc As %Status =  ..ExportItem(item)
+        if 'sc {
+            set ec = $$$ADDSC(ec, sc)
+        }
+    }
+    set ec = $$$ADDSC(ec, ..ExportSCList())
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="DeleteExternalsForItem">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim type As %String = ..Type(InternalName)
+    #dim ec As %Status = $$$OK
+    if (type = "prj") || (type = "pkg") || (type = "csp" && ..IsCspFolder(InternalName)) {
+        // we delete complex items
+        
+        //get all item in files
+        #dim itemsList
+        $$$QuitOnError(..ListItemsInFiles(.itemsList))
+        
+        #dim item As %String = ""
+        //for all item in files
+        for  {
+            set item = $Order(itemsList(item))
+            quit:item=""
+            
+            //if item is not in sc -- delete file
+            if '..IsInSourceControl(item) {
+                #dim sc As %Status = ..DeleteExternalFile(item)
+                if 'sc {
+                    set ec = $$$ADDSC(ec, sc)
+                }
+            }
+        }
+    } else {
+        set ec = ..DeleteExternalFile(InternalName)
+    }
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="RemoveFromSourceControl">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim sc As %Status = $$$OK
+    
+    if $Data(@..#Storage@("items", ..NormalizeExtension(InternalName))) {
+        set InternalName = ..NormalizeExtension(InternalName)
+    }
+    
+    if $Data(@..#Storage@("items", InternalName)) {
+        kill @..#Storage@("items", InternalName)
+        set sc = ..DeleteExternalsForItem(InternalName)
+        do ..RemoveFolderIfEmpty(..TempFolder())
+        set sc = $$$ADDSC(sc, ..ExportSCList())
+    } else {
+        #dim parentElement As %String = ""
+        if ..IsInSourceControl(InternalName, .parentElement) {
+            set sc = ..MakeError("This element is contained in "_parentElement_" that tracked by SourceControl")
+        }else {
+            set sc = ..MakeError("Element is not in SourceControl")
+        }
+        
+    }
+    quit sc
+]]></Implementation>
+</Method>
+
+<Method name="IsCspFolder">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim extension = $Piece(InternalName, ".", $Length(InternalName, "."))
+    quit:extension="csp" 0
+    
+    #dim filename = $system.CSP.GetFileName(InternalName_"/")
+    if filename = "" && ($Extract(InternalName,1) '= "/") {
+        set filename = $system.CSP.GetFileName("/"_InternalName_"/")
+    }
+    quit filename'="" && ##class(%File).DirectoryExists(filename)
+]]></Implementation>
+</Method>
+
+<Method name="Type">
+<Description><![CDATA[
+pkg -- package<br/>
+prj -- project<br/>
+csp -- csp-page or csp-folder. See <Method>IsCspFolder</Method><br/>
+csp -- any static file from csp-folder ]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim extension As %String = $ZConvert($Piece(InternalName,".",$Length(InternalName,".")),"L")
+    #dim type As %String = extension
+    
+    if ($Extract(InternalName, 1, 4) = "/csp") 
+          || ($Find(InternalName,".") = 0) 
+          || ($Find(InternalName,"/") > 0) {
+              //we need to double-check
+              //Sometimes (see NormalizeInternalName) Studio passes routine names as /Package/SubPackage/Routine.mac
+              //Generally speaking this can be static file
+              if (type = "mac") || (type = "inc") || (type = "int") {
+                  #dim filename = $system.CSP.GetFileName(InternalName)
+                  if ##class(%File).Exists(filename) {
+                      set type = "csp"
+                  }
+              } else {
+                    set type ="csp"
+              }
+    }
+   
+    quit type
+]]></Implementation>
+</Method>
+
+<Method name="NameWithoutExtension">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$Piece(InternalName, ".", 1, $Length(InternalName,".")-1)
+]]></Implementation>
+</Method>
+
+<Method name="IsClassInPackage">
+<Description>
+packageName without extension</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>ClassName:%String,packageName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[$Extract(ClassName, 1, $Length(packageName)) = packageName
+]]></Implementation>
+</Method>
+
+<Method name="IsItemInProject">
+<Description>
+projectName without extension</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String,projectName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    // we should check two cases
+    // direct inclusion
+    // inclusion in package or csp-folder that contained in project
+    #dim type As %String = ..Type(InternalName)
+    //w InternalName, "->"
+    #dim name As %String = $case(type, "cls": ..NameWithoutExtension(InternalName), 
+                                       "pkg": $Translate(..NameWithoutExtension(InternalName), "/", "."), 
+                                       "csp": $Extract(InternalName, 2, *),
+                                       :InternalName)
+    if $Extract(name) = "." && (type = "pkg") {
+        set $Extract(name) = ""
+    }
+    
+    //w name, " "
+    #dim checkId = projectName_"||"_name_"||"_$ZConvert(type,"U")
+    //w checkId
+    #dim isItemInProject As %Boolean = ##class(%Studio.ProjectItem).%ExistsId(checkId)
+    //w " ", isItemInProject, !
+    
+    #dim i As %Integer
+    if 'isItemInProject && ((type = "cls") || (type="pkg")) {
+        for i = 1:1:$Length(name, ".") {
+            set checkId = projectName_"||"_$Piece(name, ".", 1, i)_"||PKG"
+            //w checkId, !
+            if ##class(%Studio.ProjectItem).%ExistsId(checkId) {
+                set isItemInProject = 1
+                quit
+            }
+        }
+    }
+    
+    if 'isItemInProject && (type = "csp") {
+        for i = 1:1:$Length(name, "/") {
+            set checkId = projectName_"||"_$Piece(name, "/", 1, i)_"||DIR"
+            
+            if ##class(%Studio.ProjectItem).%ExistsId(checkId) {
+                set isItemInProject = 1
+                quit
+            }
+        }
+    }
+    quit isItemInProject
+]]></Implementation>
+</Method>
+
+<Method name="IsItemInCSPFolder">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>InternalName:%String,cspFolder:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[$Extract(InternalName, 1, $Length(cspFolder)) = cspFolder
+]]></Implementation>
+</Method>
+
+<Method name="FindInPackages">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,&sourceControlItem:%String]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim item As %String = ""
+    #dim found As %Boolean = 0
+    for  {
+        set item = $Order(@..#Storage@("items", item))
+        quit:item=""
+        continue:..Type(item)'="pkg"
+        #dim packageName As %String = ..NameWithoutExtension(item)
+
+        if ..IsClassInPackage(InternalName, packageName) {
+            set found = 1
+            set sourceControlItem = packageName
+            quit
+        }
+    }
+    quit found
+]]></Implementation>
+</Method>
+
+<Method name="FindInProjects">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,&sourceControlItem:%String]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim item As %String = ""
+    #dim found As %Boolean = 0
+    for  {
+        set item = $Order(@..#Storage@("items", item))
+        quit:item=""
+        continue:..Type(item)'="prj"
+        #dim projectName As %String = ..NameWithoutExtension(item)
+        
+        if ..IsItemInProject(InternalName, projectName) {
+            set found = 1
+            set sourceControlItem = projectName
+            quit
+        }
+    }
+    quit found
+]]></Implementation>
+</Method>
+
+<Method name="FindInCspFolders">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,&sourceControlItem:%String]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim cspFolder As %String = ""
+    #dim found As %Boolean = 0
+    for  {
+        set cspFolder = $Order(@..#Storage@("items", cspFolder))
+        quit:cspFolder=""
+        //no need to check IsCspFolder. It might not exist yet
+        //continue:'(..Type(cspFolder)="csp" && ..IsCspFolder(cspFolder))
+        continue:'(..Type(cspFolder)="csp")
+
+
+        
+        if ..IsItemInCSPFolder(InternalName, cspFolder) {
+            set found = 1
+            set sourceControlItem = cspFolder
+            quit 
+        }
+    }
+    quit found
+]]></Implementation>
+</Method>
+
+<Method name="IsInSourceControl">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,&sourceControlItem:%String]]></FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim isInSourceControl As %Boolean = 1
+    
+    if $Data(@..#Storage@("items", ..NormalizeExtension(InternalName))) {
+        set InternalName = ..NormalizeExtension(InternalName)
+    }
+    
+    set isInSourceControl = $Data(@..#Storage@("items", InternalName)) > 0
+    if isInSourceControl {
+        set sourceControlItem = InternalName
+    }else {
+        //if no direct reference maybe we have to look in packages, projects or csp-apps ?
+        //We have three groups of routines
+        //packages for classes
+        //projects for everything
+        //csp-folders for csp and static files
+
+        #dim type As %String = ..Type(InternalName)
+        if type = "cls" {
+            #define StripExtension(%s) $Piece(%s,".",1,$Length(%s, ".") - 1)
+            if InternalName'="" && ($$$defClassKeyGet($$$StripExtension(InternalName),$$$cCLASSgeneratedby)'="") {
+                set isInSourceControl = 0 // skip generated classes
+            } else {
+                set isInSourceControl = ..FindInPackages(InternalName, .sourceControlItem)
+            }
+        } elseif type = "csp" {
+            if $Extract(InternalName) '= "/" {
+                set InternalName = "/" _ InternalName
+            }
+            set isInSourceControl = ..FindInCspFolders(InternalName, .sourceControlItem)
+        }
+        
+        // our last chance to find item -- let's look in projects
+        if 'isInSourceControl {
+            set isInSourceControl = ..FindInProjects(InternalName, .sourceControlItem)
+        }
+    }
+    //w "checking ", $G(type), " ", InternalName, "=", isInSourceControl, !
+    quit isInSourceControl
+]]></Implementation>
+</Method>
+
+<Method name="FullExternalName">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[..TempFolder()_..ExternalName(InternalName)
+]]></Implementation>
+</Method>
+
+<Method name="NormalizeInternalName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    //Studio passes name of routine with dots as it is in folders
+    //e.g. Package.SubPackage.Routine.mac has InternalName =  /Package/SubPackage/Routine.mac
+    //This happens if right-click in Workspace -> Namespace
+    //If right-click in Workspace -> Project then everything passes ok
+    //let's fix this
+    if $Extract(name) '= "/" {
+        quit name
+    }
+    
+    set type = ..Type(name)
+    
+    if (type = "inc") || (type = "mac") || (type = "int") {
+        set name = $Extract($Translate(name, "/", "."), 2, *)
+    }
+    quit name
+]]></Implementation>
+</Method>
+
+<Method name="NormalizeExtension">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+    #dim extension = $Piece(name, ".", $Length(name, "."))
+    if $Length(extension) <= 3 {
+        set $Piece(name, ".", $Length(name, ".")) = $ZConvert(extension, "L")
+    }
+    quit name
+]]></Implementation>
+</Method>
+
+<Method name="RoutineTSH">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+       
+    #dim type = ..Type(InternalName)
+    
+    //for csp-files (csp,js,html,css, all that stored in csp/...) we always check for changes in external file
+    // Tiago G. Ribeiro.
+    //#dim tsh = $case(type,"csp":"",:$Get(@..#Storage@("TSH", ..NormalizeExtension(InternalName))))
+    #dim tsh = $Get(@..#Storage@("TSH", ..NormalizeExtension(InternalName)))    
+    
+    if tsh = "" {
+        #dim ts As %String = ##class(%RoutineMgr).TS(InternalName)
+        if ts '= "" {
+            // prj files have milliseconds in timestamp, so we crop them
+            set tsh = $Piece($ZDateTimeH(ts, 3),".",1)
+        } else {
+            set tsh = "1840-12-31 00:00:00"
+        }
+    }
+    
+    quit tsh
+]]></Implementation>
+</Method>
+
+<Method name="UpdateRoutineTSH">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String,tsh:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set @..#Storage@("TSH", ..NormalizeExtension(InternalName)) = $Get(tsh, $Horolog)
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="RemoveRoutineTSH">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    kill @..#Storage@("TSH", ..NormalizeExtension(InternalName))
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="DeleteExternalFile">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim fullName = ##class(Utils).FullExternalName(InternalName)
+    #dim ec As %Status = $$$OK
+    if ##class(%File).Exists(fullName) {
+        set ec = ##class(%File).Delete(fullName)
+        do ..RemoveRoutineTSH(InternalName)
+        write fullName, " for ", InternalName, " deleted",!
+    }
+    Quit ec
+]]></Implementation>
+</Method>
+
+<Method name="GetTempFileAndRoutineTS">
+<Description>
+if temp file for InternalName not found return "0,0" in tempFileTSH</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[InternalName:%String,&tempFileTSH:%String,&routineTSH:%String]]></FormalSpec>
+<Implementation><![CDATA[
+    #dim filename As %String = ..FullExternalName(InternalName)
+    set tempFileTSH = ##class(%File).GetFileDateModified(filename)
+    set routineTSH = ..RoutineTSH(InternalName)
+    //file not found or path not found or some other error
+    set:tempFileTSH<0 tempFileTSH = "0,0"
+    set tempFileTSH = $zdatetime(tempFileTSH,3)
+    set routineTSH = $zdatetime(routineTSH,3)
+]]></Implementation>
+</Method>
+
+<Method name="IsTempFileOutdated">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    do ..GetTempFileAndRoutineTS(InternalName,.tempFileTSH,.routineTSH)
+    quit routineTSH]tempFileTSH
+]]></Implementation>
+</Method>
+
+<Method name="IsRoutineOutdated">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    do ..GetTempFileAndRoutineTS(InternalName,.tempFileTSH,.routineTSH)       
+    quit (tempFileTSH]routineTSH)
+]]></Implementation>
+</Method>
+
+<Method name="FixProjectCspReferences">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>projectName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim loadedProject As %String = $Piece(projectName, ".", 1)
+    // now we should fix reference to csp pages in project items
+    // that is: if project was exported from USER and imported in SAMPLES
+    // then all reference to csp/user/page.csp should be changed to csp/samples/page.csp
+    #dim item As %String =""
+    #dim oldCspApp As %String = ""
+    #dim newCspApp As %String = ""
+    for  {
+        set item = $Order(^oddPROJECT(loadedProject,"Items",item))
+        quit:item=""
+        set type = $Order(^oddPROJECT(loadedProject,"Items",item,""))
+        if type = "CSP" || (type = "DIR") {
+            #dim newitem As %String = item
+            set $Piece(newitem,"/",1,2) = $Extract($system.CSP.GetDefaultApp($znspace),2,*)
+            if newitem '= item {
+                set ^oddPROJECT(loadedProject,"Items",newitem,type) = ^oddPROJECT(loadedProject,"Items",item,type)
+                kill ^oddPROJECT(loadedProject,"Items",item,type)
+                set newCspApp = $Extract($system.CSP.GetDefaultApp($znspace),2,*)
+                set oldCspApp = $Piece(item,"/",1,2)
+            }
+        }
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ImportItem">
+<Description><![CDATA[
+imports file if version in system is newer then version on disk.
+if <var>force</var> = 1 then imports in any case.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String,force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    //WRITE "Before Load Of: ", InternalName, " ", ..IsInSourceControl(InternalName), !
+    //q:'..IsInSourceControl(InternalName) $$$OK
+    #dim filename As %String = ..FullExternalName(InternalName)
+    #dim fileTSH = ##class(%File).GetFileDateModified(filename)
+    #dim sc As %Status = $$$OK
+    
+    if ..IsRoutineOutdated(InternalName) || force {
+        set sc = $system.OBJ.Load(filename,"-l-d")
+        
+        ; Tiago G. Ribeiro
+        do ..RenameClass(sc, filename, InternalName)
+        
+        if sc {            
+            set sc = ..UpdateRoutineTSH(InternalName, fileTSH)
+            if ..Type(InternalName) = "prj" {
+                set sc = $$$ADDSC(sc, ..FixProjectCspReferences(InternalName))
+            }
+            write InternalName," has been imported from ", filename,!            
+            do ##class(%SourceControl.Automation.AutomatizeCompilation).add( InternalName ) // Tiago G. Ribeiro
+        } else {
+            write "ERROR importing" ,InternalName,!
+            do $system.Status.DisplayError(sc)
+        }
+    } else {
+        ;write InternalName, " is the same as on-disk version or newer, skipping import",!
+    }
+    Quit sc
+]]></Implementation>
+</Method>
+
+<Method name="RenameClass">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&sc,filename:%String,InternalName:%String]]></FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    ; Tiago G. Ribeiro - Quando a classe é alterada o nome gera um erro
+    ; 6301 dizendo que já existe a classe, então eu excluo ela e re-importo.
+    if ( $System.Status.GetErrorCodes(sc) = 6301){                       
+        write !,"Rename classe: "_InternalName
+        set statusDelete = $system.OBJ.Delete(InternalName)
+        if ($$$ISOK(statusDelete)){
+            set sc = $system.OBJ.Load(filename,"-l-d")                
+        } else {
+            write !,"Failed to delete class "_InternalName_" to reimport"
+        }
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ListItemsInFiles">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&itemList,&err]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #define DoNotLoad 1
+    set res = $system.OBJ.ImportDir(..TempFolder(),"*.xml","-d",.err,1, .itemList, $$$DoNotLoad)
+    
+    if '$Data(itemList) && $$$ISERR(res) {
+        quit res
+    }
+    
+    if $Get(err) > 0 {
+        write "There were some errors while importing files",!
+        for i=1:1:err {
+            write err(i),!
+        }
+    }
+    
+    //change all csp/ names to /csp/ names
+    #dim item As %String = "csp"
+    for  {
+        set item = $Order(itemList(item))
+        quit:item=""
+        quit:$Extract(item, 1, 4)'="csp/"
+        kill itemList(item)
+        set itemList("/"_item)=""
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ImportRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    write "==import start==", !
+    
+    #dim err, itemList
+    
+    kill err, itemList
+    set err = 0   
+    
+    #dim ec As %Status = ..ListItemsInFiles(.itemList, .err)
+    quit:'ec ec
+    
+    #dim internalName As %String = ""
+    for  {
+        set internalName = $Order(itemList(internalName))
+        quit:internalName=""
+        if '..IsInSourceControl(internalName) {
+            //w "item ",internalName," is not in source control, skipping",!
+            continue
+        }
+        #dim sc As %Status = ..ImportItem(internalName, force)
+        if $$$ISERR(sc) {
+            set ec = $$$ADDSC(ec, sc)
+        }
+    }
+    
+    //let's delete all items for which corresponding files had been deleted
+    #dim item as %String = ""
+    for  {
+        set item = $Order(@..#Storage@("TSH", item))
+        quit:item=""
+
+        if '##class(%File).Exists(..FullExternalName(item)) {
+            #dim type As %String = ..Type(item)
+            #dim name As %String = ..NameWithoutExtension(item)
+            #dim deleted As %Boolean = 1
+            if type = "prj" {
+                set ec = $$$ADDSC(ec, $system.OBJ.DeleteProject(name))
+            }elseif type = "cls" {
+                set ec = $$$ADDSC(ec, $system.OBJ.Delete(item))
+            }elseif $ListFind($ListBuild("mac","int","inc","bas","mvb","mvi","dfi"), type) > 0 {
+                set ec = $$$ADDSC(ec, ##class(%Routine).Delete(item))
+            }elseif type = "csp" {
+                #dim filename = $system.CSP.GetFileName(item)
+                if ##class(%File).Exists(filename) && '##class(%File).Delete(filename) {
+                    set ec = $$$ADDSC(ec, ..MakeError("Error while removing "_item))
+                }
+            } else {
+                set deleted = 0
+            }
+            
+            if deleted && ec {
+                do ..RemoveRoutineTSH(item)
+                write item, " was deleted", !
+            } else {
+                if +$system.Status.GetErrorCodes(ec) '= $$$ClassDoesNotExist {
+                    write "Error: could not delete ", item, !
+                } else {
+                    // if something we wanted to delete is already deleted -- good!
+                    do ..RemoveRoutineTSH(item) // Tiago G. Ribeiro
+                    set ec = $$$OK
+                }
+            }
+        }
+    }
+    
+    write "==import done==", !
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="ExportRoutinesAux">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>path:%String,sep:%String="",level:%Integer=0,force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #define Dir
+    #define OrderBy
+    #define SystemFiles
+    #define Flat
+    #define NotStudio
+    #define ShowGenerated 0
+    #define Filter
+    #define CspFile 5
+    #define Directory 9
+    #define CSPFolder 10
+    
+    #dim rs As %ResultSet = ##class(%ResultSet).%New("%RoutineMgr:StudioOpenDialog")
+    #dim ec As %Status = rs.Execute(path_$case(path,"":"",:"/")_"*",$$$Dir, $$$OrderBy, $$$SystemFiles, $$$Flat, $$$NotStudio, $$$ShowGenerated, $$$Filter)
+    quit:'ec ec
+    while rs.Next() {
+        #dim name As %String = rs.Get("Name")
+        #dim isdirectory As %String = rs.Get("IsDirectory")
+        #dim type As %String = rs.Get("Type")
+        
+        if (type = $$$Directory) || (type = $$$CSPFolder) {
+            #dim newpath As %String = $case(path,"":name,:path_isdirectory_name)
+            do ..ExportRoutinesAux(newpath, isdirectory, level + 1, force)
+        } else {
+            #dim InternalName As %String = path_sep_name
+            if (type = $$$CspFile) && ($Extract(InternalName) '= "/") {
+                set InternalName = "/"_InternalName
+            }
+            set ec = ..ExportItem(InternalName, 1, force)
+        }
+    }
+    kill rs
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="ExportItem">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>InternalName:%String,expand:%Boolean=1,force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim type = ..Type(InternalName)
+    //write "checking if we should export "_InternalName,!
+    if type = "pkg" {
+        $$$QuitOnError(..ExportRoutinesAux(..NameWithoutExtension(InternalName), ".", 0, force))
+    }elseif type = "prj" && expand {
+        $$$QuitOnError(..ExportProject(..NameWithoutExtension(InternalName), force))
+        $$$QuitOnError(..ExportItem(InternalName, 0, force))
+    }elseif (type = "csp") && ..IsCspFolder(InternalName) {
+        $$$QuitOnError(..ExportRoutinesAux(InternalName , "/", 0, force))
+    }else {
+        if ..IsTempFileOutdated(InternalName) || force {
+            
+            #dim filename As %String = ..FullExternalName(InternalName)
+            write "exporting new version of ", InternalName, " to ", filename,!
+            $$$QuitOnError($system.OBJ.Export(InternalName, filename,"-d/diff"))
+            $$$QuitOnError(..UpdateRoutineTSH(InternalName, $Horolog))
+        } else {
+            write !,InternalName, " is not newer than on-disk version, skipping export"
+        }
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ExportProject">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>project:%String,force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim rs As %ResultSet = ##class(%ResultSet).%New("%Studio.Project:ProjectItemsList")
+    $$$QuitOnError(rs.Execute(project))
+    #dim typesWithoutExtension As %List = $ListBuild("CLS", "PKG")
+    while rs.Next() {
+        #dim name = rs.Get("Name")
+        if $ListFind(typesWithoutExtension, rs.Get("Type")) {
+            set name = name _ "." _ rs.Get("Type")
+        }
+        #dim ec As %Status = ..ExportItem(name, 1, force)
+        quit:'ec
+    }
+    kill rs
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ExportAll">
+<Description><![CDATA[
+if <var>force</var> = 1 then we export item even if timestamp in system is older]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    $$$QuitOnError(..ExportRoutines(force))
+    quit ..ExportSCList()
+]]></Implementation>
+</Method>
+
+<Method name="ImportAll">
+<Description><![CDATA[
+if <var>force</var> = 1 then we import item even if timestamp in system is newer]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim status As %Status
+    $$$QuitOnError(..ImportSCList())
+    do ##class(%SourceControl.Automation.AutomatizeCompilation).clear() // Tiago G. Ribeiro
+    set status = ..ImportRoutines(force)
+    do ##class(%SourceControl.Automation.AutomatizeCompilation).compile() // Tiago G. Ribeiro
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="ExportRoutines">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>force:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim item As %String = ""
+    #dim ec As %Status = $$$OK
+    for  {
+        set item = $Order(@..#Storage@("items",item))
+        quit:item=""
+        set ec = ..ExportItem(item, 1, force)
+        quit:'ec       
+    }
+    quit ec
+]]></Implementation>
+</Method>
+
+<Method name="ExportSCList">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim filename = ..TempFolder()_..#SCListFilename    
+    #dim file As %File = ##class(%File).%New(filename)
+    #dim item As %String = ""
+    #dim defaultCspApp As %String = $system.CSP.GetDefaultApp($znspace)
+    $$$QuitOnError(file.Open("WSN"))
+    
+    for  {
+        set item = $Order(@..#Storage@("items",item))
+        quit:item=""
+        #dim fixedItem As %String = item
+        if $Extract(fixedItem, 1, $Length(defaultCspApp)) = defaultCspApp {
+            set $Extract(fixedItem, 1, $Length(defaultCspApp)) = "<cspapp>"
+        }
+        
+        do file.WriteLine(fixedItem)
+        
+    }
+    $$$QuitOnError(file.%Save())
+    do file.Close()
+    kill file
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ImportSCList">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim filename = ..TempFolder()_..#SCListFilename
+    #dim file As %File = ##class(%File).%New(filename)
+    #dim defaultCspApp As %String = $system.CSP.GetDefaultApp($znspace)
+    #dim eol As %Boolean
+    
+    $$$QuitOnError(file.Open("R", 10))
+    
+    #dim a 
+    while 'file.AtEnd  {
+        #dim s As %String = file.ReadLine(,,.eol)
+        continue:s=""
+        #dim item As %String = $Replace(s, "<cspapp>", defaultCspApp)
+        set a(..NormalizeExtension(item)) = ""
+    }
+    kill @..#Storage("items")
+    merge @..#Storage("items") = a
+    do file.Close()
+    kill file
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="RemoveFolderIfEmpty">
+<Description>
+returns true if directory was deleted</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>path:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+    #dim rs As %ResultSet = ##class(%ResultSet).%New("%File:FileSet")
+    #define DirsFirst 1
+    $$$QuitOnError(rs.Execute(path,,,$$$DirsFirst))
+    #dim fileCount As %Integer = 0
+    while rs.Next() {
+        #dim fullname As %String = rs.Get("Name")
+        #dim type As %String = rs.Get("Type")
+        #dim name As %String = rs.Get("ItemName")
+        #define IsDirectory(%type) %type="D"
+        
+        set fileCount = fileCount + 1
+        quit:'$$$IsDirectory(type)
+        continue:name=".git"
+        if ..RemoveFolderIfEmpty(fullname) {
+            set fileCount = fileCount - 1
+        }
+    }
+    if fileCount = 0 {
+        do ##class(%File).RemoveDirectory(path)
+    }
+    kill rs
+    quit 'fileCount
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Git">
+<Import>%SourceControl.Git</Import>
+<Super>%Studio.Extension.Base</Super>
+<TimeCreated>62655,58027.787011</TimeCreated>
+
+<XData name="Menu">
+<Data><![CDATA[
+<MenuBase>
+<Menu Name="%SourceMenu" Type="0">
+<MenuItem Name="%Cache-Git-Settings" />
+<MenuItem Name="%Settings" />
+<MenuItem Name="%CreateRepo" Save = "001"/>
+<MenuItem Name="%Clone" Save = "001"/>
+<MenuItem Name="%Commit" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Pull" Save = "001"/>
+<MenuItem Name="%Fetch" Save = "001"/>
+<MenuItem Name="%Switch" Save = "001"/>
+<MenuItem Name="%Merge" Save = "001"/>
+<MenuItem Name="%Push" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Diff" Save = "001"/>
+<MenuItem Name="%RepoStatus" Save = "001"/>
+<MenuItem Name="%Resolve" Save = "001"/>
+<MenuItem Name="%Revert" Save = "001"/>
+<MenuItem Name="%Log" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%StashSave" Save = "001"/>
+<MenuItem Name="%StashPop" Save = "001"/>
+<MenuItem Separator="true"/>
+<MenuItem Name="%Export" Save = "001" />
+<MenuItem Name="%ExportForce" Save = "001" />
+<MenuItem Name="%Import" Save = "001" />
+<MenuItem Name="%ImportForce" Save = "001" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%OpenRepoFolder" Save = "001" />
+</Menu>
+<Menu Name="%TestUnitario" Type="0">
+<MenuItem Name="%TestCreateClass" />
+<MenuItem Name="%TestOpenClassTest" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestAllClass" />
+<MenuItem Name="%TestClass" />
+<MenuItem Name="%TestLastTest" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestClearResult" />
+<MenuItem Name="%TestClearPopulate" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestAutomaticOn" />
+<MenuItem Name="%TestAutomaticOff" />
+</Menu>
+<Menu Name="%SourceMenuContext" Type="1">
+<MenuItem Name="%AddToSC"/>
+<MenuItem Name="%RemoveFromSC"/>
+<MenuItem Name="%Diff" Save = "001"/>
+<MenuItem Name="%Blame" Save = "001"/>
+</Menu>
+<Menu Name="%TestUnitarioContext" Type="1">
+<MenuItem Name="%TestClass" />
+<MenuItem Name="%TestAndCompile" />
+<MenuItem Name="%TestPackage" />
+<MenuItem Separator="true"/>
+<MenuItem Name="%TestOpenClassTest" />
+</Menu>
+
+</MenuBase>
+]]></Data>
+</XData>
+
+<Method name="UserAction">
+<FormalSpec><![CDATA[Type:%Integer,Name:%String,InternalName:%String,SelectedText:%String,&Action:%String,&Target:%String,&Msg:%String,&Reload:%Boolean]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    ; Tiago G. Ribeiro
+    try {
+        if ('##class(ActionMenu).execute(Name, InternalName, SelectedText, .Target, .Action)){
+            #dim ec As %Status = $$$OK
+            #dim menu As %Status = $Piece(Name, ",", 1)
+            if menu '= "%SourceMenu", menu'="%SourceMenuContext" {
+                return $$$OK
+            }
+            set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+            set ec = ##class(Utils).UserAction(InternalName, Name, .Target, .Action, .Reload)
+            return ec
+        } else {
+            return $$$OK
+        }
+    } catch e {
+        W e.DisplayString()
+    }
+]]></Implementation>
+</Method>
+
+<Method name="OnSourceMenuItem">
+<FormalSpec><![CDATA[name:%String,&Enabled:%String,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    if name = "%Cache-Git-Settings" {
+        // We always show Settings
+        set DisplayName = "Settings"
+        quit $$$OK
+    } 
+    if name = "%Settings" && ##class(Utils).GitBinExists() {
+        set DisplayName = "TortoiseGit Settings"
+        quit $$$OK
+    }
+    
+    if ##class(Utils).NeedSettings() {
+        set Enabled = -1
+        quit $$$OK
+    }
+    if ##class(Utils).IsNamespaceInGit() {
+        if name = "%Export" {
+            set DisplayName = "Export All"
+        } elseif name="%ExportForce" {
+            set DisplayName = "Export All Force"
+        } elseif name = "%Import" {
+            set DisplayName = "Import All"
+        } elseif name = "%ImportForce" {
+            set DisplayName = "Import All Force"
+        }elseif name = "%RepoStatus" && ##class(Utils).GitBinExists() {
+            set DisplayName = "Check for modifications"
+        }elseif name = "%OpenRepoFolder" {
+            set DisplayName = "Open Repo Folder"
+        }
+        elseif ##class(Utils).IsMenuGitCommand(name) && ##class(Utils).GitBinExists() {
+            set DisplayName = $case(name,"%StashSave":"Stash save",
+                                         "%StashPop":"Stash pop",
+                                         :$Extract(name, 2, *))
+        } 
+        else {
+            set Enabled = -1
+        }
+    } elseif ##class(Utils).GitBinExists() { 
+        if name = "%CreateRepo" {
+            set DisplayName = "Create Repo"
+        } elseif name = "%Clone" {
+            set DisplayName = "Clone"
+        } else {
+            set Enabled = -1
+        }
+    } else {
+        set Enabled = -1 
+    }
+        
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnSourceMenuContextItem">
+<FormalSpec><![CDATA[itemName:%String,menuItemName:%String,&Enabled:%String,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set:menuItemName="%AddToSC" DisplayName = "Add to SourceControl"
+    set:menuItemName="%RemoveFromSC" DisplayName = "Remove from SourceControl"
+    
+    if (itemName = "") || '##class(Utils).IsNamespaceInGit() {
+        set Enabled = -1
+    }elseif ##class(Utils).IsInSourceControl(##class(Utils).NormalizeInternalName(itemName)) {
+        set Enabled = $Case(menuItemName, "%AddToSC":-1,:1)
+    } else {
+        set Enabled = $Case(menuItemName, "%AddToSC":1,:-1)
+    }
+        
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnMenuItem">
+<Description><![CDATA[
+This is called for every menu item returned to Studio to allow the menu to be enabled/disabled without
+having to write a custom query for <query>MenuItems</query>. The <var>DisplayName</var> of this menu is
+also passed by reference and this may be modified to change the appearance of this menu item. The <var>MenuName</var>
+is the main menu name then the submenu name separated by a ','. If <var>Enabled</var> is set to -1 then it will remove
+this menu item from the list totally, 0 will gray the menu item out and the default 1 will display the menu item as normal.]]></Description>
+<FormalSpec><![CDATA[MenuName:%String,InternalName:%String,SelectedText:%String,&Enabled:%Boolean,&DisplayName:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim menu As %String= $Piece(MenuName,",")
+    #dim name As %String = $Piece(MenuName,",",2)
+    if menu = "%SourceMenuContext", name = "" {
+        set DisplayName = "Git"
+    }
+    if menu = "%SourceMenu", name = "" {
+        set DisplayName = "Git"
+    }
+    #dim ec As %Status = $$$OK
+
+    if menu = "%SourceMenu" {
+        set ec = ..OnSourceMenuItem(name, .Enabled, .DisplayName)
+    }elseif menu = "%SourceMenuContext" {
+        set ec = ..OnSourceMenuContextItem(InternalName, name, .Enabled, .DisplayName)
+    }
+    
+    ; Tiago G. Ribeiro
+    do ##class(TranslateMenu).translate( MenuName, .DisplayName )
+    do ##class(ActionMenuStatus).active( MenuName, InternalName, .Enabled, .DisplayName, SelectedText )
+        
+    Quit ec
+]]></Implementation>
+</Method>
+
+<Method name="OnBeforeLoad">
+<Description>
+This is called before the actual load of data to give the chance
+to load the item from an external format.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsInSourceControl(InternalName) {
+        quit ##class(Utils).ImportItem(InternalName)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterSave">
+<Description>
+This is called after the item has been saved to the database.
+It may be passed a reference to the object representing the item
+just saved. It can be use to export this documement to an external form for example.</Description>
+<FormalSpec>InternalName:%String,Object:%RegisteredObject=$$$NULLOREF</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsNamespaceInGit() && ..IsInSourceControl(InternalName) {
+        $$$QuitOnError(##class(Utils).RemoveRoutineTSH(InternalName))
+        quit ##class(Utils).ExportItem(InternalName)
+    } else {
+        quit $$$OK
+    }
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterCompile">
+<Description>
+Called after the compile of the item is done.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set status = ..OnAfterSave(InternalName)
+    do ##class(%SourceControl.Automation.AutomatizeTest).%New(InternalName).autoTest()
+    quit status
+]]></Implementation>
+</Method>
+
+<Method name="IsInSourceControl">
+<Description>
+Returns true if this item is in source control and false otherwise.</Description>
+<CodeMode>expression</CodeMode>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[InternalName'="" && ##class(Utils).IsInSourceControl(##class(Utils).NormalizeInternalName(InternalName))
+]]></Implementation>
+</Method>
+
+<Method name="OnAfterDelete">
+<Description>
+Called after an item is deleted.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set InternalName = ##class(Utils).NormalizeInternalName(InternalName)
+    if ##class(Utils).IsInSourceControl(InternalName) {
+        quit ##class(Utils).DeleteExternalFile(InternalName)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnBeforeTimestamp">
+<Description>
+Called before Studio checks for the timestamp of an item.</Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<Implementation><![CDATA[
+    ; Desabilitado pois ao importar um arquivo não estava deixando o arquivo importado
+    ; e sempre reimportando o do disco.
+    ;do ##class(Utils).ImportItem(InternalName)
+    do ##class(%SourceControl.Instalation.Manager).install()
+    Quit
+]]></Implementation>
+</Method>
+
+<Method name="ItemIconState">
+<Description><![CDATA[
+Used to allow Studio to display different icons in open dialog or project window etc.
+Return values are:<ul>
+<li>0 - Not in source control</li>
+<li>1 - In source control, not checked out</li>
+<li>2 - In source control and checked out so item is editable</li></ul>]]></Description>
+<FormalSpec>InternalName:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    set automation = ##class(%SourceControl.Automation.AutomatizeTest).%New(InternalName)
+    if (automation.isRunTest() && 'automation.isClassTest()){
+        return 2
+    }
+    Quit 0
+]]></Implementation>
+</Method>
+
+<Property name="IconStatus">
+<Description><![CDATA[
+Can be set to determine if we wish to report the source control status of the document in the project window
+or in the open dialog. This property should be set when the source control class is initialized.
+As this can be a large number of callbacks the default is not to call the
+<method>ItemIconState</method> method at all. Do not enable this unless the information needed is available
+directly in Cache or the performance will be too slow. Values are:<ul>
+<li>0 - Disabled</li>
+<li>1 - Use <method>ItemIconState</method> callback in project window</li>
+<li>2 - Use <method>ItemIconState</method> callback in open dialog window (and namespace window)</li>
+<li>3 - Use <method>ItemIconState</method> callback everywhere</li></ul>]]></Description>
+<Type>%Integer</Type>
+<InitialExpression>1</InitialExpression>
+</Property>
+
+<Method name="GetStatus">
+<Description>
+Return information about this entity.</Description>
+<FormalSpec><![CDATA[InternalName:%String,&IsInSourceControl:%Boolean,&Editable:%Boolean,&IsCheckedOut:%Boolean,&UserCheckedOut:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    
+    #dim isTest As %Boolean
+    set automation = ##class(%SourceControl.Automation.AutomatizeTest).%New(InternalName)
+    set isTest = (automation.isRunTest() && 'automation.isClassTest())
+    
+    set Editable=1
+    set IsCheckedOut=isTest
+    set UserCheckedOut=""
+    set IsInSourceControl=isTest
+    Quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Instalation.Manager">
+<Import>%SourceControl.Automation</Import>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64666,36238.556428</TimeCreated>
+
+<Method name="install">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[    do ##class(AutomatizeStorage).installDefault()
+]]></Implementation>
+</Method>
+
+<Method name="menu">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+    #dim option
+init
+    write #
+    write !,?10,"Wellcome in configurations of Studio Tools - v1.0"    
+    write !,?10,"Author: Tiago G Ribeiro (tiago_goulart@yahoo.com)"
+    write !,?10,"GitHub: https://github.com/tiagogribeiro/cache-intersystems-studio-tools"
+    write !,?10,"--------------------------------------------------------"
+    write !,?10,"[0] - Exit."
+    write !,?10,"[1] - Configure all default."
+    write !,?10,"[2] - Configure package test."
+    write !,?10,"[3] - Configure 'super' for Unit Test."
+    write !,?10,"[4] - Configure namespace to Unit Test."
+    write !,?10,"[5] - Configure user for slack integration."
+    write !,?10,"[6] - Enable/Disabled integration in Slack."        
+    write !,?10,"--------------------------------------------------------"    
+    write !,?10,"Input option:"
+    read option
+    
+    goto:(option="") init
+    goto:(option=0) exit
+    
+    do $case(option,                
+                1: ..configureAllDefault(),
+                2: ..configurePackageTest(),
+                3: ..configureSuperClassTest(),
+                4: ..configureNamespaceToUnitTest(),
+                5: ..configureUserForSlackIntegration(),
+                6: ..enableAndDisabledSlackIntegration())
+        
+    hang:(option>0) 2
+        
+    goto init
+    
+exit
+    write !,?10,"bye."
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="displayMessageConfigure">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    if (+##class(AutomatizeStorage).getStorageValue("Installer","automatize")=0){
+        write !,"Configure the 'Studio Tools' of terminal, execute: do ##class(%SourceControl.Instalation.Manager).menu() in your namespace."
+    }
+    return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="configureAllDefault">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is option reconfigure all definitions."
+    write !,?10,"You want to reconfigure (y/n):"
+    read option
+    
+    if ($zConvert(option,"U")="Y"){
+        do ##class(AutomatizeStorage).setStorageValue("Installer","automatize",$$$NO)
+        do ##class(AutomatizeStorage).installDefault()
+        write !,?10,"Success reconfigure all definitions."
+    } else {
+        write !,?10,"nothing done."
+    }
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configurePackageTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim package As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","package")
+    write !,?10,"New configuration:"
+    read package
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","package",package)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureSuperClassTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","SuperClass")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","SuperClass",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureNamespaceToUnitTest">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("UnitTest","namespace")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("UnitTest","namespace",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="configureUserForSlackIntegration">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    write !,?10,"It is configurated in:"_##class(AutomatizeStorage).getStorageValue("Integration","SlackUser")
+    write !,?10,"New configuration:"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("Integration","SlackUser",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+
+<Method name="enableAndDisabledSlackIntegration">
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<Private>1</Private>
+<Implementation><![CDATA[
+    #dim option As %String
+    #dim enableAndDisabled As %Boolean = ##class(AutomatizeStorage).getStorageValue("Integration","SlackEnable")
+    write !,?10,"It is configurated in:"_$select(enableAndDisabled=1:"enable",1:"disabled")
+    write !,?10,"New configuration (1/0):"
+    read option
+    do ##class(AutomatizeStorage).setStorageValue("Integration","SlackEnable",option)
+    write !,?10,"Success in configuration."    
+    quit
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.Menu">
+<Abstract>1</Abstract>
+<Super>%RegisteredObject</Super>
+<TimeCreated>64506,31351.261952</TimeCreated>
+
+<Property name="name">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="internalName">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Property name="selectedText">
+<Type>%String</Type>
+<Private>1</Private>
+</Property>
+
+<Method name="%OnNew">
+<FormalSpec>name:%String,internalName:%String,selectedText:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set ..name = name
+    set ..internalName = internalName
+    set ..selectedText = selectedText    
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="%SourceControl.OptionState">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64497,35416.497336</TimeCreated>
+
+<Parameter name="STORAGE">
+<Final>1</Final>
+<Default>^%Studio.Option</Default>
+</Parameter>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="registerOption">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>option:%String,state:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    set @..#STORAGE(option) = state
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="removeOption">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>option:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    kill @..#STORAGE(option)
+    quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getOption">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>option:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[    quit $get(@..#STORAGE(option))
+]]></Implementation>
+</Method>
+</Class>
+
+
+
+
+<Class name="%SourceControl.TranslateMenu">
+<Super>%RegisteredObject</Super>
+<TimeCreated>64281,37991.035363</TimeCreated>
+
+<Method name="%OnNew">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    quit $$$ERROR($$$NotAnInstanceError)
+]]></Implementation>
+</Method>
+
+<Method name="translate">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[name:%String,&DisplayName]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim lastName As %String
+    set lastName = ##class(ActionMenuUtil).getLastNameMenu( name )
+    
+    set DisplayName = $case(lastName,   
+                "%TestUnitarioContext" : $$$Text("@Menu.Testar@Testar","%Studio.Tools"),          ; Do not move, context menu.
+                "%TestUnitario" :$$$Text("@Menu.Testar@Testar","%Studio.Tools"),                 ; Do not move, main menu.
+                "%TestClass" : $$$Text("@Menu.TestarClasse@Testar esta classe","%Studio.Tools"),                
+                "%TestAndCompile" : $$$Text("@Menu.CompilarETestar@Compilar e testar esta classe","%Studio.Tools"),
+                "%TestAllClass" : $$$Text("@Menu.TestarSuiteCompleto@Testar o suíte completo","%Studio.Tools"),
+                "%TestPackage" : $$$Text("@Menu.TestarPacote@Testar o pacote","%Studio.Tools"),
+                "%TestLastTest" : $$$Text("@Menu.RodarUltimoTeste@Rodar o último teste","%Studio.Tools"),
+                "%TestClearResult" : $$$Text("@Menu.LimparResultadoTeste@Limpar os resultados dos testes","%Studio.Tools"),
+                "%TestClearPopulate" : $$$Text("@Menu.LimparDadosPopulate@Limpar os dados do Populate","%Studio.Tools"),
+                "%TestAutomaticOff" : $$$Text("@Menu.DesabilitarAutoTeste@Desabilitar - Compilar e testar","%Studio.Tools"),
+                "%TestAutomaticOn" : $$$Text("@Menu.HabilitarAutoTeste@Habilitar - Compilar e testar","%Studio.Tools"),
+                "%TestCreateClass" : $$$Text("@Menu.CriarClasseTeste@Criar a classe de teste","%Studio.Tools"),
+                "%TestOpenClassTest" : $$$Text("@Menu.AbrirClasseTeste@Abrir classe de teste","%Studio.Tools"),
+                :DisplayName)
+    
+    quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Project name="studio-tools" LastModified="2018-12-17 10:10:50.588615">
+  <Items>
+    <ProjectItem name="%SourceControl" type="PKG"></ProjectItem>
+  </Items>
+</Project>
+</Export>
